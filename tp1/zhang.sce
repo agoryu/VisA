@@ -18,7 +18,7 @@
 
 // Definition des fonctions utilitaires
 exec ('glue.sci', -1);
-exec ('prenom-nom.sci', -1);
+exec ('Elliot_Vanegue.sci', -1);
 // Nombre d'images
 ni = 4;
 
