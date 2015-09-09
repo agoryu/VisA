@@ -9,8 +9,16 @@
 
 \maketitle
 
+\section{Introduction}
+objectif : determiner les 11 degrès de liberté par la méthode de zhang
 
-
-\section{}
+\section{Étude de la publication de Zhang}
+La méthode de Zhang admet que la mire est en Z=0 dans le repère monde. Cela
+implique que le paramètre de rotation r3 de la matrice extrinsèque sera supprimer dans la formule
+\textit{mettre la 1er formule du paragraphe 2.2}. Cela va permettre de déterminer une homographie contenant les autres
+paramètre extrinsèque.
+Cependant, une homographie possède huit degrès de liberté, alors que la matrice qui a été déterminé
+n'en possède que six. La méthode de Zhang va donc rajouter à cette homographie des paramètres provenant
+de la matrice intrinsèque.
 
 \end{document}
