@@ -1,5 +1,7 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
 
 %opening
 \title{Eléments de géométrie projective et calibration de caméra}
@@ -10,13 +12,25 @@
 \maketitle
 
 \section{Introduction}
-objectif : determiner les 11 degrès de liberté par la méthode de zhang
+Lors de ce TP, nous allons chercher à déterminer les paramètres extrinsèque et 
+intrinsèque d'une caméra en utilisant la méthode de calibration de Zhang.
+Cette méthode prend plusieurs images donc chaque angle de vue est différent, mais
+où la mire se place toujours en Z=0. Cela va permettre de réduire le nombre de paramètre
+à calculer.
 
 \section{Étude de la publication de Zhang}
 La méthode de Zhang admet que la mire est en Z=0 dans le repère monde. Cela
-implique que le paramètre de rotation r3 de la matrice extrinsèque sera supprimer dans la formule
-\textit{mettre la 1er formule du paragraphe 2.2}. Cela va permettre de déterminer une homographie contenant les autres
-paramètre extrinsèque.
+implique que le paramètre de rotation r3 de la matrice extrinsèque sera supprimer dans la matrice extrinsèque.
+Ce qui nous permet d'avoir le calcul suivant : 
+$$s\begin{pmatrix}u\\v\\1\end{pmatrix} = A\begin{pmatrix}r_1&r_2&t\end{pmatrix}\begin{pmatrix}x\\y\\1\end{pmatrix}$$
+
+La méthode de Zhang détermine ensuite une homographie à partir du vecteur du point du modèle 3D avec celui
+du modèle 2D. Cette homographie va permettre de construire une matrice de contrainte permettant de 
+calculer les paramètres intrinsèques de la caméra. Cette matrice de contrainte va se calculer de la manière suivante :
+$$v_ij = [h_{i1}*h_{j1}, h_{i1}*h_{j2} + h_{i2}*h_{j1}, h_{i2}*h_{j2}, h_{i3}*h_{j1} + h_{i1}*h_{j3}, h_{i3}*h_{j2} + h_{i2}*h_{j3}, h_{i3}*h_{j3}]$$
+
+%de la forme $$2nx6$$ où n est le nombre d'image traité
+Cela va permettre de déterminer une homographie contenant les autres paramètres extrinsèques.
 Cependant, une homographie possède huit degrès de liberté, alors que la matrice qui a été déterminé
 n'en possède que six. La méthode de Zhang va donc rajouter à cette homographie des paramètres provenant
 de la matrice intrinsèque.

@@ -54,3 +54,4 @@ for i = 1:ni
   E(:,:,i) = ExtrinsicMatrix(iA, H(:,:,i));
 end
 
+disp(E);
