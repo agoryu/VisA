@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{amsfonts}
 
 %opening
 \title{Eléments de géométrie projective et calibration de caméra}
@@ -10,6 +11,10 @@
 \begin{document}
 
 \maketitle
+\newpage
+\renewcommand{\contentsname}{Sommaire}
+\tableofcontents
+\newpage
 
 \section{Introduction}
 Lors de ce TP, nous allons chercher à déterminer les paramètres extrinsèque et 
@@ -19,20 +24,90 @@ où la mire se place toujours en Z=0. Cela va permettre de réduire le nombre de
 à calculer.
 
 \section{Étude de la publication de Zhang}
+
+La méthode de Zhang permet de déterminer les paramètres de calibration d'une caméra
+à partir de plusieurs points de vue. Elle part du calcule suivant :
+\begin{equation}
+ s\begin{pmatrix}u\\v\\1\end{pmatrix} = A\begin{pmatrix}r_1&r_2&r_3&t\end{pmatrix}\begin{pmatrix}x\\y\\0\\1\end{pmatrix}
+\end{equation}
 La méthode de Zhang admet que la mire est en Z=0 dans le repère monde. Cela
-implique que le paramètre de rotation r3 de la matrice extrinsèque sera supprimer dans la matrice extrinsèque.
-Ce qui nous permet d'avoir le calcul suivant : 
-$$s\begin{pmatrix}u\\v\\1\end{pmatrix} = A\begin{pmatrix}r_1&r_2&t\end{pmatrix}\begin{pmatrix}x\\y\\1\end{pmatrix}$$
+implique que le paramètre de rotation r3 de la matrice extrinsèque sera supprimer.
+Cette méthode utilise une matrice B qui est égale à $A^{-T}A^{-1}$ afin de déterminer la valeur
+des paramètres de la matrice intrinsèque. Pour calculer cette matrice B il faut utiliser le
+calcul suivant : 
+\begin{equation}
+ h^T_iBh_j=v^T_{ij}b
+\end{equation}
+Ici la valeur de v représente des contraintes qui dépendent du nombre d'image utilisé pour 
+la calibration.
+Une fois que la matrice intrinsèque est calculé, il
+est possible de retrouver les paramètres extrinsèques à partir de la formule (1).
 
-La méthode de Zhang détermine ensuite une homographie à partir du vecteur du point du modèle 3D avec celui
-du modèle 2D. Cette homographie va permettre de construire une matrice de contrainte permettant de 
-calculer les paramètres intrinsèques de la caméra. Cette matrice de contrainte va se calculer de la manière suivante :
-$$v_ij = [h_{i1}*h_{j1}, h_{i1}*h_{j2} + h_{i2}*h_{j1}, h_{i2}*h_{j2}, h_{i3}*h_{j1} + h_{i1}*h_{j3}, h_{i3}*h_{j2} + h_{i2}*h_{j3}, h_{i3}*h_{j3}]$$
+\section{Calcul de la matrice de contraintes V}
+La matrice de contrainte V utilise la formule suivante :
+\begin{multline}
+ v_ij = [h_{i1}*h_{j1}, h_{i1}*h_{j2} + h_{i2}*h_{j1}, h_{i2}*h_{j2},  \\
+ h_{i3}*h_{j1} + h_{i1}*h_{j3}, h_{i3}*h_{j2} + h_{i2}*h_{j3}, h_{i3}*h_{j3}]
+\end{multline}
 
-%de la forme $$2nx6$$ où n est le nombre d'image traité
-Cela va permettre de déterminer une homographie contenant les autres paramètres extrinsèques.
-Cependant, une homographie possède huit degrès de liberté, alors que la matrice qui a été déterminé
-n'en possède que six. La méthode de Zhang va donc rajouter à cette homographie des paramètres provenant
-de la matrice intrinsèque.
+Si on prend l'équation (2) on voit que la valeur manquante est b. Pour calculer cette valeur il faut
+utiliser la formule suivante :
+\begin{equation}
+ \begin{pmatrix}v^T_{12}\\(v_{11}-v_{22})^T\end{pmatrix}b=0
+\end{equation}
+Lorsque cette formule est utilisé avec plus de trois images, la valeur de b devient unique et on obtient
+alors $$Vb=0$$ V étant calculé avec la formule (3). Ainsi b est de la forme $[B_{11}, B_{12}, B_{22}, B_{13}, B_{23}, B_{33}]$.
+
+\section{Calcul de la matrice intrinsèque}
+Maintenant que la matrice b est calculé, il suffit de l'utiliser afin de déterminer les différents 
+paramètres de la matrice intrinsèque avec les calcules suivants : 
+
+\begin{align}
+  &v0     = \frac{B_{12}*B_{13} - B_{11}*B_{23}}{B_{11}*B_{22} - B^2_{12}}\\
+  &\lambda = b(6) - \frac{B^2_{13} + v0 * (B_{12} * B_{13} - B_{11} * B_{23})}{B_{11}}\\
+  &\alpha  = \sqrt{\frac{\lambda}{B_{11}}}\\
+  &\beta   = \sqrt{\frac{\lambda*B_{11}}{B_{11}*B_{22} - B^2_{12}}}\\
+  &\gamma  = \frac{-B_{12}*\alpha^2*\beta}{\lambda}\\
+  &u0     = \frac{\gamma *v0}{\beta} - \frac{B_{13}*\alpha^2}{\lambda}\\
+\end{align}
+
+On obtient ainsi les valeurs suivantes pour notre cas : 
+$$\begin{pmatrix} 3498 & -3,1 & 336,8\\0 & 3503 & 220,1\\ 0 & 0 & 1\end{pmatrix}$$
+On peut voir que ces résultats sont assez proche des résultats attendu avec néanmoins
+une légère variation sur les facteurs d'échelle.
+
+\section{Calcul de la matrice extrinsèque}
+Il est maintenant possible de déterminer les paramètres extrinsèque à partir de la formule (1)
+étant donné que l'homographie est connu ainsi des paramètres intrinsèques. Il faut donc utiliser
+les formules suivantes pour calculer la matrice extrinsèque : 
+
+\begin{align}
+ &\lambda = \frac{1}{||A^{-1}h_1||}\\
+ &r_1=\lambda A^{-1}h_1\\
+ &r_2=\lambda A^{-1}h_2\\
+ &r_3=r_1*r_2\\
+ &t=\lambda A^{-1}h_3
+\end{align}
+
+Ce qui nous donne les résultats suivants pour la matrice extrinsèque :\\ 
+
+\begin{center}
+\begin{tabular}{|c|c|}
+ \hline
+ numéro de l'image & résultat\\
+ \hline
+ 1 & $\begin{pmatrix} 1 & 0 & 0 & -49\\0 & 1 & 0 & 55\\ 0 & 0 & 0 & 9854\end{pmatrix}$\\
+ \hline
+ 2 & $\begin{pmatrix} 1 & 0 & 0 & -46\\0 & 1 & 0 & 44\\ -1 & 0 & 0 & 7905\end{pmatrix}$\\
+ \hline
+ 3 & $\begin{pmatrix} 1 & 0 & 0 & -44\\0 & 1 & 0 & 49\\ 0 & 0 & 0 & 8870\end{pmatrix}$\\
+ \hline
+ 4 & $\begin{pmatrix} 1 & 0 & 0 & -144\\0 & 1 & 0 & 42\\ 0 & -1 & 0 & 8872\end{pmatrix}$\\
+ \hline
+\end{tabular}
+\end{center}
+On voit que les résultat des translations de chacune des images sont assez proche des résultats
+attendu. En revanche, les résultats pour les rotations ne sont pas correctes, car les rotations
+ne sont par effectué sur le bonne axe.
 
 \end{document}

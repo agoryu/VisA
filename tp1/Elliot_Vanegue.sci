@@ -53,10 +53,11 @@ endfunction
 function E = ExtrinsicMatrix(iA, H)
   // A modifier!
   //E = rand(3, 4);
-  r1 = iA * H(:,1);
-  r2 = iA * H(:,2);
+  lambda = 1 / norm(iA*H(:,1));
+  r1 = lambda * iA * H(:,1);
+  r2 = lambda * iA * H(:,2);
   r3 = r1 .* r2;
-  t = iA * H(:,3);
+  t = lambda * iA * H(:,3);
   E = [r1, r2, r3, t];
 endfunction
 
