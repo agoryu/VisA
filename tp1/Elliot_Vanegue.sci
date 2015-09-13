@@ -38,7 +38,7 @@ function A = IntrinsicMatrix(b)
   alpha = sqrt(lambda/b(1));
   bet = sqrt(lambda*b(1)/(b(1)*b(3) - b(2)*b(2)));
   gama = -b(2)*alpha*alpha*bet/lambda;
-  u0 = gama*v0/bet - b(4)*alpha*alpha/lambda;
+  u0 = gama*v0/bet - (b(4)*alpha*alpha)/lambda;
   
   A = [alpha, gama, u0; 0, bet, v0; 0, 0, 1];
 endfunction

@@ -110,4 +110,20 @@ On voit que les résultat des translations de chacune des images sont assez proc
 attendu. En revanche, les résultats pour les rotations ne sont pas correctes, car les rotations
 ne sont par effectué sur le bonne axe.
 
+\section{Calcul de la distance focal}
+Il est possible de calculer la distance focal en décomposant la formule (1).
+\begin{equation}
+ s\begin{pmatrix}u\\v\\1\end{pmatrix} = \begin{pmatrix}k_u&s_{uv}&u_0\\0&k_v&v_0\\0&0&1\end{pmatrix}\begin{pmatrix}f&0&0\\0&f&0\\0&0&1\end{pmatrix}
+					\begin{pmatrix}r_1&r_2&r_3&t\end{pmatrix}\begin{pmatrix}x\\y\\0\\1\end{pmatrix}
+\end{equation}
+Si on nomme K la matrice $\begin{pmatrix}k_u&s_{uv}&u_0\\0&k_v&v_0\\0&0&1\end{pmatrix}\begin{pmatrix}r_1&r_2&t\end{pmatrix}$, il est possible de 
+remplacer la matrice B dans la formule (2) par $K^{-T}K^{-1}$. 
+Il serait alors possible de calculer la matrice focal grâce aux formules :
+\begin{align}
+ &\lambda = \frac{1}{||K^{-1}h_1||}\\
+ &f_1=\lambda K^{-1}h_1\\
+ &f_2=\lambda K^{-1}h_2\\
+ &f_3=f_1*f_2\\
+\end{align}
+
 \end{document}
