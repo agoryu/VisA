@@ -4,6 +4,43 @@
 \usepackage{amssymb}
 \usepackage{amsfonts}
 
+% define our color
+\usepackage{xcolor}
+% insert code
+\usepackage{listings}
+
+% code color
+\definecolor{ligthyellow}{RGB}{250,247,220}
+\definecolor{darkblue}{RGB}{5,10,85}
+\definecolor{ligthblue}{RGB}{1,147,128}
+\definecolor{darkgreen}{RGB}{8,120,51}
+\definecolor{darkred}{RGB}{160,0,0}
+
+\lstset{
+    language=Scilab,
+    captionpos=b,
+    extendedchars=true,
+    frame=lines,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    keepspaces=true,
+    breaklines=true,
+    showspaces=false,
+    showstringspaces=false,
+    breakatwhitespace=false,
+    stepnumber=1,
+    showtabs=false,
+    tabsize=3,
+    basicstyle=\small\ttfamily,
+    backgroundcolor=\color{ligthyellow},
+    keywordstyle=\color{ligthblue},
+    morekeywords={include, printf, uchar},
+    identifierstyle=\color{darkblue},
+    commentstyle=\color{darkgreen},
+    stringstyle=\color{darkred},
+}
+
 %opening
 \title{Eléments de géométrie projective et calibration de caméra}
 \author{Elliot Vanegue}
@@ -11,10 +48,10 @@
 \begin{document}
 
 \maketitle
-\newpage
-\renewcommand{\contentsname}{Sommaire}
-\tableofcontents
-\newpage
+% \newpage
+% \renewcommand{\contentsname}{Sommaire}
+% \tableofcontents
+% \newpage
 
 \section{Introduction}
 Lors de ce TP, nous allons chercher à déterminer les paramètres extrinsèque et 
@@ -25,23 +62,24 @@ où la mire se place toujours en Z=0. Cela va permettre de réduire le nombre de
 
 \section{Étude de la publication de Zhang}
 
-La méthode de Zhang permet de déterminer les paramètres de calibration d'une caméra
-à partir de plusieurs points de vue. Elle part du calcule suivant :
-\begin{equation}
- s\begin{pmatrix}u\\v\\1\end{pmatrix} = A\begin{pmatrix}r_1&r_2&r_3&t\end{pmatrix}\begin{pmatrix}x\\y\\0\\1\end{pmatrix}
-\end{equation}
-La méthode de Zhang admet que la mire est en Z=0 dans le repère monde. Cela
-implique que le paramètre de rotation r3 de la matrice extrinsèque sera supprimer.
-Cette méthode utilise une matrice B qui est égale à $A^{-T}A^{-1}$ afin de déterminer la valeur
-des paramètres de la matrice intrinsèque. Pour calculer cette matrice B il faut utiliser le
+La méthode de Zhang utilise une matrice B qui est égale à $A^{-T}A^{-1}$, où A est la matrice
+intrinsèque. Il faut donc déterminer la valeur de la matrice B afin de pouvoir ensuite 
+calculer les paramètres intrinsèques. Pour calculer cette matrice B il faut utiliser le
 calcul suivant : 
 \begin{equation}
  h^T_iBh_j=v^T_{ij}b
 \end{equation}
 Ici la valeur de v représente des contraintes qui dépendent du nombre d'image utilisé pour 
-la calibration.
+la calibration. Les valeurs $h^T_i$ et $h_j$ sont connus et représentent des valeurs présentent
+dans l'homographie composé des matrices $\begin{pmatrix}u\\v\\1\end{pmatrix}$ et $\begin{pmatrix}x\\y\\1\end{pmatrix}$.
 Une fois que la matrice intrinsèque est calculé, il
-est possible de retrouver les paramètres extrinsèques à partir de la formule (1).
+est possible de retrouver les paramètres extrinsèques à partir de la formule :
+\begin{equation}
+ s\begin{pmatrix}u\\v\\1\end{pmatrix} = A\begin{pmatrix}r_1&r_2&r_3&t\end{pmatrix}\begin{pmatrix}x\\y\\z\\1\end{pmatrix}
+\end{equation}
+Cette méthode admet que la mire est en Z=0 dans le repère monde. Cela
+implique que le paramètre de rotation r3 de la matrice extrinsèque sera null. Il est donc
+possible de supprimer ce paramètre.\\
 
 \section{Calcul de la matrice de contraintes V}
 La matrice de contrainte V utilise la formule suivante :
@@ -50,13 +88,13 @@ La matrice de contrainte V utilise la formule suivante :
  h_{i3}*h_{j1} + h_{i1}*h_{j3}, h_{i3}*h_{j2} + h_{i2}*h_{j3}, h_{i3}*h_{j3}]
 \end{multline}
 
-Si on prend l'équation (2) on voit que la valeur manquante est b. Pour calculer cette valeur il faut
+Si on prend l'équation (1) on voit que la valeur manquante est b. Pour calculer cette valeur il faut
 utiliser la formule suivante :
 \begin{equation}
  \begin{pmatrix}v^T_{12}\\(v_{11}-v_{22})^T\end{pmatrix}b=0
 \end{equation}
 Lorsque cette formule est utilisé avec plus de trois images, la valeur de b devient unique et on obtient
-alors $$Vb=0$$ V étant calculé avec la formule (3). Ainsi b est de la forme $[B_{11}, B_{12}, B_{22}, B_{13}, B_{23}, B_{33}]$.
+alors $Vb=0$, V étant calculé avec la formule (3). Ainsi b est de la forme $[B_{11}, B_{12}, B_{22}, B_{13}, B_{23}, B_{33}]$.
 
 \section{Calcul de la matrice intrinsèque}
 Maintenant que la matrice b est calculé, il suffit de l'utiliser afin de déterminer les différents 
@@ -77,8 +115,8 @@ On peut voir que ces résultats sont assez proche des résultats attendu avec n�
 une légère variation sur les facteurs d'échelle.
 
 \section{Calcul de la matrice extrinsèque}
-Il est maintenant possible de déterminer les paramètres extrinsèque à partir de la formule (1)
-étant donné que l'homographie est connu ainsi des paramètres intrinsèques. Il faut donc utiliser
+Il est maintenant possible de déterminer les paramètres extrinsèque à partir de la formule (2)
+étant donné que l'homographie est connu ainsi que les paramètres intrinsèques. Il faut donc utiliser
 les formules suivantes pour calculer la matrice extrinsèque : 
 
 \begin{align}
@@ -107,13 +145,14 @@ Ce qui nous donne les résultats suivants pour la matrice extrinsèque :\\
 \end{tabular}
 \end{center}
 On voit que les résultat des translations de chacune des images sont assez proche des résultats
-attendu. En revanche, les résultats pour les rotations ne sont pas correctes, car les rotations
-ne sont par effectué sur le bonne axe.
+attendu. 
+%En revanche, les résultats pour les rotations ne sont pas correctes, car les rotations
+%ne sont par effectué sur le bonne axe.
 
 \section{Calcul de la distance focal}
-Il est possible de calculer la distance focal en décomposant la formule (1).
+Il est possible de calculer la distance focal en décomposant la formule (2).
 \begin{equation}
- s\begin{pmatrix}u\\v\\1\end{pmatrix} = \begin{pmatrix}k_u&s_{uv}&u_0\\0&k_v&v_0\\0&0&1\end{pmatrix}\begin{pmatrix}f&0&0\\0&f&0\\0&0&1\end{pmatrix}
+ s\begin{pmatrix}u\\v\\1\end{pmatrix} = \begin{pmatrix}f&0&0\\0&f&0\\0&0&1\end{pmatrix}\begin{pmatrix}k_u&s_{uv}&u_0\\0&k_v&v_0\\0&0&1\end{pmatrix}
 					\begin{pmatrix}r_1&r_2&r_3&t\end{pmatrix}\begin{pmatrix}x\\y\\0\\1\end{pmatrix}
 \end{equation}
 Si on nomme K la matrice $\begin{pmatrix}k_u&s_{uv}&u_0\\0&k_v&v_0\\0&0&1\end{pmatrix}\begin{pmatrix}r_1&r_2&t\end{pmatrix}$, il est possible de 
@@ -125,5 +164,77 @@ Il serait alors possible de calculer la matrice focal grâce aux formules :
  &f_2=\lambda K^{-1}h_2\\
  &f_3=f_1*f_2\\
 \end{align}
+
+\section{Conclusion}
+La méthode de Zhang est donc une méthode très efficace pour déterminer l'ensemble des parametres
+de calibration d'une caméra. Les résultats sont très proche de ceux attendu. Cette méthode
+permet également de déterminer la focal de la caméra si tous les paramètres sont connus.
+
+\section{Annexes}
+\begin{lstlisting}[caption=Fonctions utilise pour la methode de Zhang]
+// ---------------------------------------------
+/// \brief Calcule un terme de contrainte a partir d'une homographie.
+///
+/// \param H: matrice 3*3 définissant l'homographie.
+/// \param i: premiere colonne.
+/// \param j: deuxieme colonne.
+/// \return vecteur definissant le terme de contrainte.
+// --------------------------------------------
+function v = ZhangConstraintTerm(H, i, j)
+  // A modifier!
+  //v = rand(1, 6);
+  v = [H(1,i)*H(1,j), H(1,i)*H(2,j) + H(2,i)*H(1,j), H(2,i)*H(2,j),...
+        H(3,i)*H(1,j) + H(1,i)*H(3,j), H(3,i)*H(2,j) + H(2,i)*H(3,j), H(3,i)*H(3,j)];
+endfunction
+
+// ------------------------------------------
+/// \brief Calcule deux equations de contrainte a partir d'une homographie
+///
+/// \param H: matrice 3*3 définissant l'homographie.
+/// \return matrice 2*6 definissant les deux contraintes.
+// -------------------------------------------
+function v = ZhangConstraints(H)
+  v = [ZhangConstraintTerm(H, 1, 2); ...
+    ZhangConstraintTerm(H, 1, 1) - ZhangConstraintTerm(H, 2, 2)];
+endfunction
+
+// ------------------------------------------
+/// \brief Calcule la matrice des parametres intrinseques.
+///
+/// \param b: vecteur resultant de l'optimisation de Zhang.
+/// \return matrice 3*3 des parametres intrinseques.
+// ------------------------------------------
+function A = IntrinsicMatrix(b)
+  // A modifier!
+  //A = rand(3, 3);
+  v0 = (b(2)*b(4) - b(1)*b(5)) / (b(1)*b(3) - b(2)*b(2));
+  lambda = b(6) - (b(4) * b(4) + v0 * (b(2) * b(4) - b(1) * b(5))) / b(1);
+  alpha = sqrt(lambda/b(1));
+  bet = sqrt(lambda*b(1)/(b(1)*b(3) - b(2)*b(2)));
+  gama = -b(2)*alpha*alpha*bet/lambda;
+  u0 = gama*v0/bet - (b(4)*alpha*alpha)/lambda;
+  
+  A = [alpha, gama, u0; 0, bet, v0; 0, 0, 1];
+endfunction
+
+// ---------------------------------------------
+/// \brief Calcule la matrice des parametres extrinseques.
+///
+/// \param iA: inverse de la matrice intrinseque.
+/// \param H: matrice 3*3 definissant l'homographie.
+/// \return matrice 3*4 des parametres extrinseques.
+// ---------------------------------------------
+function E = ExtrinsicMatrix(iA, H)
+  // A modifier!
+  //E = rand(3, 4);
+  lambda = 1 / norm(iA*H(:,1));
+  r1 = lambda * iA * H(:,1);
+  r2 = lambda * iA * H(:,2);
+  r3 = r1 .* r2;
+  t = lambda * iA * H(:,3);
+  E = [r1, r2, r3, t];
+endfunction
+
+\end{lstlisting}
 
 \end{document}
