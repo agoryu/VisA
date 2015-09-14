@@ -54,51 +54,51 @@
 % \newpage
 
 \section{Introduction}
-Lors de ce TP, nous allons chercher à déterminer les paramètres extrinsèque et 
-intrinsèque d'une caméra en utilisant la méthode de calibration de Zhang.
-Cette méthode prend plusieurs images donc chaque angle de vue est différent, mais
-où la mire se place toujours en Z=0. Cela va permettre de réduire le nombre de paramètre
+Lors de ce TP, nous allons chercher à déterminer les paramètres extrinsèques et 
+intrinsèques d'une caméra en utilisant la méthode de calibration de Zhang.
+Cette méthode prend plusieurs images, donc chaque angle de vue est différent, mais
+où la mire se place toujours en Z=0. Cela va permettre de réduire le nombre de paramètres
 à calculer.
 
 \section{Étude de la publication de Zhang}
 
 La méthode de Zhang utilise une matrice B qui est égale à $A^{-T}A^{-1}$, où A est la matrice
 intrinsèque. Il faut donc déterminer la valeur de la matrice B afin de pouvoir ensuite 
-calculer les paramètres intrinsèques. Pour calculer cette matrice B il faut utiliser le
+calculer les paramètres intrinsèques. Pour calculer cette matrice B, il faut utiliser le
 calcul suivant : 
 \begin{equation}
  h^T_iBh_j=v^T_{ij}b
 \end{equation}
-Ici la valeur de v représente des contraintes qui dépendent du nombre d'image utilisé pour 
-la calibration. Les valeurs $h^T_i$ et $h_j$ sont connus et représentent des valeurs présentent
-dans l'homographie composé des matrices $\begin{pmatrix}u\\v\\1\end{pmatrix}$ et $\begin{pmatrix}x\\y\\1\end{pmatrix}$.
-Une fois que la matrice intrinsèque est calculé, il
+Ici la valeur de v représente des contraintes qui dépendent du nombre d'images utilisées pour 
+la calibration. Les valeurs $h^T_i$ et $h_j$ sont connues et représentent des valeurs présentes
+dans l'homographie composée des matrices $\begin{pmatrix}u\\v\\1\end{pmatrix}$ et $\begin{pmatrix}x\\y\\1\end{pmatrix}$.
+Une fois que la matrice intrinsèque est calculée, il
 est possible de retrouver les paramètres extrinsèques à partir de la formule :
 \begin{equation}
  s\begin{pmatrix}u\\v\\1\end{pmatrix} = A\begin{pmatrix}r_1&r_2&r_3&t\end{pmatrix}\begin{pmatrix}x\\y\\z\\1\end{pmatrix}
 \end{equation}
-Cette méthode admet que la mire est en Z=0 dans le repère monde. Cela
-implique que le paramètre de rotation r3 de la matrice extrinsèque sera null. Il est donc
+Cette méthode admet que la mire est plane, ce qui signifie que Z=0 dans le repère monde. Cela
+implique que le paramètre de rotation r3 de la matrice extrinsèque sera nul. Il est donc
 possible de supprimer ce paramètre.\\
 
 \section{Calcul de la matrice de contraintes V}
-La matrice de contrainte V utilise la formule suivante :
+La matrice de contraintes V utilise la formule suivante :
 \begin{multline}
  v_ij = [h_{i1}*h_{j1}, h_{i1}*h_{j2} + h_{i2}*h_{j1}, h_{i2}*h_{j2},  \\
  h_{i3}*h_{j1} + h_{i1}*h_{j3}, h_{i3}*h_{j2} + h_{i2}*h_{j3}, h_{i3}*h_{j3}]
 \end{multline}
 
-Si on prend l'équation (1) on voit que la valeur manquante est b. Pour calculer cette valeur il faut
+Si on prend l'équation (1), on voit que la valeur manquante est b. Pour calculer cette valeur, il faut
 utiliser la formule suivante :
 \begin{equation}
  \begin{pmatrix}v^T_{12}\\(v_{11}-v_{22})^T\end{pmatrix}b=0
 \end{equation}
-Lorsque cette formule est utilisé avec plus de trois images, la valeur de b devient unique et on obtient
+Lorsque cette formule est utilisée avec plus de trois images, la valeur de b devient unique et on obtient
 alors $Vb=0$, V étant calculé avec la formule (3). Ainsi b est de la forme $[B_{11}, B_{12}, B_{22}, B_{13}, B_{23}, B_{33}]$.
 
 \section{Calcul de la matrice intrinsèque}
-Maintenant que la matrice b est calculé, il suffit de l'utiliser afin de déterminer les différents 
-paramètres de la matrice intrinsèque avec les calcules suivants : 
+Maintenant que la matrice b est calculée, il suffit de l'utiliser afin de déterminer les différents 
+paramètres de la matrice intrinsèque avec les calculs suivants : 
 
 \begin{align}
   &v0     = \frac{B_{12}*B_{13} - B_{11}*B_{23}}{B_{11}*B_{22} - B^2_{12}}\\
@@ -111,12 +111,12 @@ paramètres de la matrice intrinsèque avec les calcules suivants :
 
 On obtient ainsi les valeurs suivantes pour notre cas : 
 $$\begin{pmatrix} 3498 & -3,1 & 336,8\\0 & 3503 & 220,1\\ 0 & 0 & 1\end{pmatrix}$$
-On peut voir que ces résultats sont assez proche des résultats attendu avec néanmoins
+On peut voir que ces résultats sont assez proches des résultats attendus avec néanmoins
 une légère variation sur les facteurs d'échelle.
 
 \section{Calcul de la matrice extrinsèque}
-Il est maintenant possible de déterminer les paramètres extrinsèque à partir de la formule (2)
-étant donné que l'homographie est connu ainsi que les paramètres intrinsèques. Il faut donc utiliser
+Il est maintenant possible de déterminer les paramètres extrinsèques à partir de la formule (2),
+étant donné que l'homographie est connue, ainsi que les paramètres intrinsèques. Il faut donc utiliser
 les formules suivantes pour calculer la matrice extrinsèque : 
 
 \begin{align}
@@ -144,20 +144,20 @@ Ce qui nous donne les résultats suivants pour la matrice extrinsèque :\\
  \hline
 \end{tabular}
 \end{center}
-On voit que les résultat des translations de chacune des images sont assez proche des résultats
-attendu. 
+On voit que les résultats des translations de chacune des images sont assez proches des résultats
+attendus. 
 %En revanche, les résultats pour les rotations ne sont pas correctes, car les rotations
 %ne sont par effectué sur le bonne axe.
 
-\section{Calcul de la distance focal}
-Il est possible de calculer la distance focal en décomposant la formule (2).
+\section{Calcul de la distance focale}
+Il est possible de calculer la distance focale en décomposant la formule (2).
 \begin{equation}
  s\begin{pmatrix}u\\v\\1\end{pmatrix} = \begin{pmatrix}f&0&0\\0&f&0\\0&0&1\end{pmatrix}\begin{pmatrix}k_u&s_{uv}&u_0\\0&k_v&v_0\\0&0&1\end{pmatrix}
 					\begin{pmatrix}r_1&r_2&r_3&t\end{pmatrix}\begin{pmatrix}x\\y\\0\\1\end{pmatrix}
 \end{equation}
 Si on nomme K la matrice $\begin{pmatrix}k_u&s_{uv}&u_0\\0&k_v&v_0\\0&0&1\end{pmatrix}\begin{pmatrix}r_1&r_2&t\end{pmatrix}$, il est possible de 
 remplacer la matrice B dans la formule (2) par $K^{-T}K^{-1}$. 
-Il serait alors possible de calculer la matrice focal grâce aux formules :
+Il serait alors possible de calculer la matrice focale grâce aux formules :
 \begin{align}
  &\lambda = \frac{1}{||K^{-1}h_1||}\\
  &f_1=\lambda K^{-1}h_1\\
@@ -166,9 +166,9 @@ Il serait alors possible de calculer la matrice focal grâce aux formules :
 \end{align}
 
 \section{Conclusion}
-La méthode de Zhang est donc une méthode très efficace pour déterminer l'ensemble des parametres
-de calibration d'une caméra. Les résultats sont très proche de ceux attendu. Cette méthode
-permet également de déterminer la focal de la caméra si tous les paramètres sont connus.
+La méthode de Zhang est donc une méthode très efficace pour déterminer l'ensemble des paramètres
+de calibration d'une caméra. Les résultats sont très proches de ceux attendus. Cette méthode
+permet également de déterminer la focale de la caméra si tous les paramètres sont connus.
 
 \section{Annexes}
 \begin{lstlisting}[caption=Fonctions utilise pour la methode de Zhang]
