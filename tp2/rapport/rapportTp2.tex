@@ -17,7 +17,7 @@
 \definecolor{darkred}{RGB}{160,0,0}
 
 \lstset{
-    language=Scilab,
+    language=C++,
     captionpos=b,
     extendedchars=true,
     frame=lines,
@@ -58,11 +58,89 @@ partir de deux images dont les angles de vues sont différents.
 \section{Calcul de la matrice fondamentale}
 La matrice fondamentale contient l'ensemble des informations de la géométrie épipolaire.
 Elle est constitué de sept degrès de liberté. Cette géométrie décrit les relations entre
-différentes photo du même objet. Pour la calculer, il faut utiliser la formule suivante :
+différentes photographies du même objet. Pour la calculer, il faut utiliser la formule suivante :
 \begin{equation}
  F=(P_2O_1)^xP_2P^+_1
+ \label{fondamentale}
+\end{equation}
+Pour calculer F, on peut voir qu'il faut utiliser un produit vectoriel afin de 
+pouvoir calculer la droite passant par les points de chaque image. Pour cela,
+à partir d'un vecteur p, il faut construire la matrice suivante :
+\begin{equation}
+ p^x=\begin{pmatrix}
+  0 & -p_z & p_y\\
+  p_z & 0 & -p_x\\
+  -p_y & p_x & 0
+ \end{pmatrix}
+ \label{vectoriel}
 \end{equation}
 
+Nous allons maintenant détailler la façon de calculer la matrice fondamentale afin
+d'obtenir l'équation \eqref{fondamentale}. Tout d'abord, nous devons calculer
+les matrices $P_1$ et $P_2$ qui sont respectivement la multiplication des matrices
+intrinsèque et extrinsèque de l'image de gauche et de l'image de droite. Il faut
+d'abord multiplier la matrice extrinsèque par la matrice $\begin{pmatrix} 1&0&0&0\\0&1&0&0\\0&0&1&0\end{pmatrix}$,
+car la matrice extrinsèque est de la forme 4x3 alors que la matrice intrinsèque est de la forme
+3x3. Ce qui nous donne le calcul suivant :
+\begin{align}
+ &P_1 = mLeftIntrinsic * \begin{pmatrix} 1&0&0&0\\0&1&0&0\\0&0&1&0\end{pmatrix} * mLeftExtrinsic\\
+ &P_2 = mRightIntrinsic * \begin{pmatrix} 1&0&0&0\\0&1&0&0\\0&0&1&0\end{pmatrix} * mRightExtrinsic
+ \label{matriceP}
+\end{align}
 
+Il ne reste plus qu'à déterminer la valeur de $O_1$ qui est un point sur l'image de gauche.
+Pour calculer ces coordonnées, il faut inverser la matrice extrinsèque gauche et récupérer
+les valeurs de la dernière colonne de cette matrice. Il reste alors à calculer la matrice
+fondamentale avec le calcul \eqref{fondamentale}(voir \ref{Afondamentale}).
+
+\section{Détermination d'équations de droite}
+%Grâce au calcul de la droite fondamentale, il est possible de déterminer les équations de droite
+
+
+\section{Annexes}
+\subsection{Annexe A}
+\label{AproduitVector}
+\begin{lstlisting}[caption=Calcul produit vectoriel]
+ Mat iviVectorProductMatrix(const Mat& v) {
+     Mat mVectorProduct = (Mat_<double>(3,3) <<
+             0.0, -v.at<double>(0,2), v.at<double>(0,1),
+             v.at<double>(0,2), 0.0, -v.at<double>(0,0),
+             -v.at<double>(0,1), v.at<double>(0,0), 0.0);
+     return mVectorProduct;
+ }
+\end{lstlisting}
+
+\subsection{Annexe B}
+\label{Afondamentale}
+\begin{lstlisting}[caption=Calcul matrice fondamentale]
+ Mat iviFundamentalMatrix(const Mat& mLeftIntrinsic,
+                         const Mat& mLeftExtrinsic,
+                         const Mat& mRightIntrinsic,
+                         const Mat& mRightExtrinsic) {
+                         
+    Mat mFundamental = Mat::eye(3, 3, CV_64F);
+   
+    Mat tmp = (Mat_<double>(3,4) <<
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0
+        );
+    Mat P1 = mLeftIntrinsic * tmp * mLeftExtrinsic;
+    Mat P2 = mRightIntrinsic * tmp * mRightExtrinsic;
+
+    Mat O = mLeftExtrinsic.inv();
+    Mat O1 = (Mat_<double>(4,1) <<
+        O.at<double>(3),
+        O.at<double>(7),
+        O.at<double>(11),
+        O.at<double>(15)
+        );
+
+    Mat Hpi = P2 * P1.inv(DECOMP_SVD);
+    mFundamental = iviVectorProductMatrix(P2*O1) * Hpi;
+
+    return mFundamental;
+}
+\end{lstlisting}
 
 \end{document}

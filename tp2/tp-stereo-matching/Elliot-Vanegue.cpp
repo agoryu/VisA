@@ -90,6 +90,7 @@ Mat iviFundamentalMatrix(const Mat& mLeftIntrinsic,
     // A modifier !
     // Doit utiliser la fonction iviVectorProductMatrix
     Mat mFundamental = Mat::eye(3, 3, CV_64F);
+    cout << mLeftExtrinsic << endl;
     Mat tmp = (Mat_<double>(3,4) <<
         1.0, 0.0, 0.0, 0.0,
         0.0, 1.0, 0.0, 0.0,
