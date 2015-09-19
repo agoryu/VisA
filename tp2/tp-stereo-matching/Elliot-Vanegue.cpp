@@ -128,6 +128,11 @@ Mat iviDistancesMatrix(const Mat& m2DLeftCorners,
                        const Mat& mFundamental) {
     // A modifier !
     Mat mDistances = Mat();
+    Mat d2 = mFundamental * m2DLeftCorners;
+    Mat Ft = Mat();
+    transpose(mFundamental, Ft);
+    Mat d1 = Ft * m2DRightCorners;
+    mDistances = d1 + d2;
     // Retour de la matrice fondamentale
     return mDistances;
 }
@@ -146,4 +151,5 @@ void iviMarkAssociations(const Mat& mDistances,
                          Mat& mRightHomologous,
                          Mat& mLeftHomologous) {
     // A modifier !
+    cout << mDistances << endl;
 }

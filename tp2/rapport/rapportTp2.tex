@@ -1,12 +1,18 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
+
+%pour les equations
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
 
-% define our color
+%pour les images
+\usepackage{graphicx}
+
+% pour definir des couleurs
 \usepackage{xcolor}
-% insert code
+
+% pour inclure du code
 \usepackage{listings}
 
 % code color
@@ -113,9 +119,8 @@ par la fonction goodFeaturesToTrack :
 \begin{lstlisting}[caption=Calcul des coins]
  Mat iviDetectCorners(const Mat& mImage,
                      int iMaxCorners) {
-                     
+                   
     vector<Point2f> corners;
-
     goodFeaturesToTrack( mImage, corners, iMaxCorners, 0.01,
                10, Mat(), 3, false, 0.04 );
 
@@ -127,19 +132,36 @@ par la fonction goodFeaturesToTrack :
         mCorners.at<double>(1, i) = corners[i].y;
         mCorners.at<double>(2, i) = 1.0;
     }
-
-    // Retour de la matrice
     return mCorners;
 }
 \end{lstlisting}
 
 Grâce à cette fonction, nous allons récupérer les coins calculés dans chaque image.
-\begin{figure}[H]
+\begin{figure}[!h]
   \center
-    \includegraphics[width=5cm]{../laplacien0.png}
-  \caption{Mise en évidence des pixels mis à zéro par le Laplacien}
+    \includegraphics[width=5cm]{leftR.png}
+    \includegraphics[width=5cm]{rightR.png}
+  \caption{Mise en évidence des coins calculés avec la méthode goodFeaturesToTrack dans les images gauche et droite}
 \end{figure}
-  
+%TODO voir si le fait d'avoir des points sur des lignes signifie que le point est présent dans les deux images
+On peut voir, sur le résultat, des points rouge qui correspondent aux coins calculés par la méthode goodFeaturesToTrack
+dans l'image, ainsi que des lignes vertes qui correspondent aux coins calculés par la méthode goodFeaturesToTrack dans la
+seconde image.
+ 
+\section{Calcul des distances}
+Nous allons maintenant calculer la distance entre chaque paire de point afin de pouvoir déterminer
+les meilleurs correspondances. Pour cela, nous devons calculer deux distances différentes, puis les 
+additionner pour avoir le résultat final. La première distance à calculer est celle entre le point de l'image gauche et la droite épipolaire 
+de l'image gauche associée au point de l'image droite. Et la seconde est celle entre le point de l'image droite et la droite épipolaire de 
+l'image droite associée au point de l'image gauche. Pour cela nous allons effectuer les calcules suivants :
+\begin{enumerate}
+ \item $D_1 = FM_1$
+ \item $D_2 = F^tM_2$
+\end{enumerate}
+Dans ces opération, on a $M_1$ et $M_2$ deux matrices comportant respectivement les coordonnées des points 
+de l'image de gauche et de l'image de droite. En additionnant $D_1$ et $D_2$ nous obtenons l'ensemble des
+distances entre chaque point.
+
 \section{Annexes}
 \subsection{Annexe A}
 \label{AproduitVector}
@@ -185,6 +207,25 @@ Grâce à cette fonction, nous allons récupérer les coins calculés dans chaqu
     return mFundamental;
 }
 \end{lstlisting}
+
+\section{Annexe C}
+\label{distanceA}
+\begin{lstlisting}[caption=Calcul des distances entre les points de chaque paire]
+ Mat iviDistancesMatrix(const Mat& m2DLeftCorners,
+                       const Mat& m2DRightCorners,
+                       const Mat& mFundamental) {
+ 
+    Mat mDistances = Mat();
+    Mat d2 = mFundamental * m2DLeftCorners;
+    Mat Ft = Mat();
+    transpose(mFundamental, Ft);
+    Mat d1 = Ft * m2DRightCorners;
+    mDistances = d1 + d2;
+    
+    return mDistances;
+}
+\end{lstlisting}
+
 
 \bibliographystyle{plain}
 \bibliography{bibli} 
