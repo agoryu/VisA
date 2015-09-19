@@ -77,7 +77,7 @@ pouvoir calculer la droite passant par les points de chaque image. Pour cela,
 
 Nous allons maintenant détailler la façon de calculer la matrice fondamentale afin
 d'obtenir l'équation \eqref{fondamentale}. Tout d'abord, nous devons calculer
-les matrices $P_1$ et $P_2$ qui sont respectivement la multiplication des matrices
+les matrices de projection $P_1$ et $P_2$ qui sont respectivement la multiplication des matrices
 intrinsèque et extrinsèque de l'image de gauche et de l'image de droite. Il faut
 d'abord multiplier la matrice extrinsèque par la matrice $\begin{pmatrix} 1&0&0&0\\0&1&0&0\\0&0&1&0\end{pmatrix}$,
 car la matrice extrinsèque est de la forme 4x3 alors que la matrice intrinsèque est de la forme
@@ -94,9 +94,52 @@ les valeurs de la dernière colonne de cette matrice. Il reste alors à calculer
 fondamentale avec le calcul \eqref{fondamentale}(voir \ref{Afondamentale}).
 
 \section{Détermination d'équations de droite}
-%Grâce au calcul de la droite fondamentale, il est possible de déterminer les équations de droite
+Grâce au calcul de la droite fondamentale, il est possible de déterminer les équations de droite
+allant d'une image au centre de la second. Nous allons donc déterminer ces équations.
+\begin{itemize}
+ \item Equation de la droite épipolaire de l'image droite associée au centre de l'image de gauche :
+ $F=(P_2\begin{pmatrix}u_1\\v_1\\1\end{pmatrix})^xP_2P^+_1$
+ \item Equation de la droite épipolaire de l'image gauche associée au centre de l'image de droite :
+ $F=(P_1\begin{pmatrix}u_2\\v_2\\1\end{pmatrix})^xP_1P^+_2$
+ \item Equation de la droite épipolaire de l'image droite associée au point situé au centre du côté haut de l'image de gauche :
+ $F=(P_2\begin{pmatrix}u_1\\0\\1\end{pmatrix})^xP_2P^+_1$
+\end{itemize}
 
+\section{Extraction des coins}
+Nous allons maintenant mettre en évidence des pixels d'intérêt dans les deux images pour réaliser une mise
+en correspondance stéréoscopique. Pour cela, nous allons utiliser la méthode de Jianbo Shi et Carlo Tomasi\cite{323794}
+déjà implémenté dans la librairie OpenCV. Voici la fonction permettant de récupérer l'ensemble des coins calculés
+par la fonction goodFeaturesToTrack :
+\begin{lstlisting}[caption=Calcul des coins]
+ Mat iviDetectCorners(const Mat& mImage,
+                     int iMaxCorners) {
+                     
+    vector<Point2f> corners;
 
+    goodFeaturesToTrack( mImage, corners, iMaxCorners, 0.01,
+               10, Mat(), 3, false, 0.04 );
+
+    int sizeCorners = corners.size();
+    Mat mCorners = Mat(3,sizeCorners,CV_64F);
+
+    for(int i=0; i<sizeCorners; i++) {
+        mCorners.at<double>(0, i) = corners[i].x;
+        mCorners.at<double>(1, i) = corners[i].y;
+        mCorners.at<double>(2, i) = 1.0;
+    }
+
+    // Retour de la matrice
+    return mCorners;
+}
+\end{lstlisting}
+
+Grâce à cette fonction, nous allons récupérer les coins calculés dans chaque image.
+\begin{figure}[H]
+  \center
+    \includegraphics[width=5cm]{../laplacien0.png}
+  \caption{Mise en évidence des pixels mis à zéro par le Laplacien}
+\end{figure}
+  
 \section{Annexes}
 \subsection{Annexe A}
 \label{AproduitVector}
@@ -142,5 +185,8 @@ fondamentale avec le calcul \eqref{fondamentale}(voir \ref{Afondamentale}).
     return mFundamental;
 }
 \end{lstlisting}
+
+\bibliographystyle{plain}
+\bibliography{bibli} 
 
 \end{document}
