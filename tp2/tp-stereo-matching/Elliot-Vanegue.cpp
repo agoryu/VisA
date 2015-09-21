@@ -127,12 +127,30 @@ Mat iviDistancesMatrix(const Mat& m2DLeftCorners,
                        const Mat& m2DRightCorners,
                        const Mat& mFundamental) {
     // A modifier !
-    Mat mDistances = Mat();
-    Mat d2 = mFundamental * m2DLeftCorners;
+    Mat D2 = mFundamental * m2DLeftCorners;
     Mat Ft = Mat();
     transpose(mFundamental, Ft);
-    Mat d1 = Ft * m2DRightCorners;
-    mDistances = d1 + d2;
+    Mat D1 = Ft * m2DRightCorners;
+
+    int size = D1.cols;
+    Mat mDistances = Mat::eye(size, size, CV_64F);
+    
+    for(int i=0; i<size; i++) {
+        for(int j=0; j<size; j++) {
+            double num = fabs(D1.at<double>(i,0)*m2DLeftCorners.at<double>(i,0)+D1.at<double>(i,1)*m2DLeftCorners.at<double>(i,1)+
+                D1.at<double>(i,2));
+            double denom = sqrt(D1.at<double>(i,0)*D1.at<double>(i,0)+D1.at<double>(i,1)*D1.at<double>(i,1));
+            double d1 = num/denom;
+
+            num = fabs(D2.at<double>(j,0)*m2DRightCorners.at<double>(j,0)+D2.at<double>(j,1)*m2DRightCorners.at<double>(j,1)+
+                D2.at<double>(j,2));
+            denom = sqrt(D2.at<double>(j,0)*D2.at<double>(j,0)+D2.at<double>(j,1)*D2.at<double>(j,1));
+            double d2 = num/denom;
+            double distance = d1 + d2;
+            mDistances.at<double>(i,j) = distance;
+        }
+    }
+
     // Retour de la matrice fondamentale
     return mDistances;
 }
@@ -151,5 +169,22 @@ void iviMarkAssociations(const Mat& mDistances,
                          Mat& mRightHomologous,
                          Mat& mLeftHomologous) {
     // A modifier !
-    cout << mDistances << endl;
+    int size = mDistances.cols;
+    double minValue = std::numeric_limits<double>::infinity();
+    int minIndex = size+1;
+
+    for(int i=0; i<size; i++) {
+        for(int j=0; j<size; j++) {
+            double distance = mDistances.at<double>(i,j);
+            if(distance < dMaxDistance && distance < minValue) {
+                minValue = distance;
+                minIndex = j;
+            }
+        }
+        if(minValue < std::numeric_limits<double>::infinity()) 
+            mRightHomologous.at<double>(i,0) = minIndex;
+        else
+            mRightHomologous.at<double>(i,0) = -1;
+    }        
+    cout << mRightHomologous << endl;
 }
