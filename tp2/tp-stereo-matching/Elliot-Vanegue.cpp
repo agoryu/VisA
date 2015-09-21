@@ -90,7 +90,6 @@ Mat iviFundamentalMatrix(const Mat& mLeftIntrinsic,
     // A modifier !
     // Doit utiliser la fonction iviVectorProductMatrix
     Mat mFundamental = Mat::eye(3, 3, CV_64F);
-    cout << mLeftExtrinsic << endl;
     Mat tmp = (Mat_<double>(3,4) <<
         1.0, 0.0, 0.0, 0.0,
         0.0, 1.0, 0.0, 0.0,
@@ -170,6 +169,8 @@ void iviMarkAssociations(const Mat& mDistances,
                          Mat& mLeftHomologous) {
     // A modifier !
     int size = mDistances.cols;
+    mRightHomologous = Mat::eye(1, size, CV_64F);
+    mLeftHomologous = Mat::eye(1, size, CV_64F);
     double minValue = std::numeric_limits<double>::infinity();
     int minIndex = size+1;
 
@@ -182,9 +183,9 @@ void iviMarkAssociations(const Mat& mDistances,
             }
         }
         if(minValue < std::numeric_limits<double>::infinity()) 
-            mRightHomologous.at<double>(i,0) = minIndex;
+            mRightHomologous.at<double>(0,i) = minIndex;
         else
-            mRightHomologous.at<double>(i,0) = -1;
+            mRightHomologous.at<double>(0,i) = -1;
     }        
-    cout << mRightHomologous << endl;
+    cout << dMaxDistance << endl;
 }
