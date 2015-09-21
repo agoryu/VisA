@@ -171,21 +171,33 @@ void iviMarkAssociations(const Mat& mDistances,
     int size = mDistances.cols;
     mRightHomologous = Mat::eye(1, size, CV_64F);
     mLeftHomologous = Mat::eye(1, size, CV_64F);
-    double minValue = std::numeric_limits<double>::infinity();
-    int minIndex = size+1;
+    double minValueR = std::numeric_limits<double>::infinity();
+    int minIndexR = size+1;
+    double minValueL = std::numeric_limits<double>::infinity();
+    int minIndexL = size+1;
 
     for(int i=0; i<size; i++) {
         for(int j=0; j<size; j++) {
-            double distance = mDistances.at<double>(i,j);
-            if(distance < dMaxDistance && distance < minValue) {
-                minValue = distance;
-                minIndex = j;
+            double distanceR = mDistances.at<double>(i,j);
+            if(distanceR < dMaxDistance && distanceR < minValueR) {
+                minValueR = distanceR;
+                minIndexR = j;
+            }
+            double distanceL = mDistances.at<double>(j,i);
+            if(distanceL < dMaxDistance && distanceL < minValueL) {
+                minValueL = distanceL;
+                minIndexL = j;
             }
         }
-        if(minValue < std::numeric_limits<double>::infinity()) 
-            mRightHomologous.at<double>(0,i) = minIndex;
+        if(minValueR < std::numeric_limits<double>::infinity()) 
+            mRightHomologous.at<double>(0,i) = minIndexR;
         else
             mRightHomologous.at<double>(0,i) = -1;
+        if(minValueL < std::numeric_limits<double>::infinity()) 
+            mLeftHomologous.at<double>(0,i) = minIndexL;
+        else
+            mLeftHomologous.at<double>(0,i) = -1;
     }        
-    cout << dMaxDistance << endl;
+    cout << mRightHomologous << endl;
+    cout << mLeftHomologous << endl;
 }

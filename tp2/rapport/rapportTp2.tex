@@ -144,7 +144,7 @@ Grâce à cette fonction, nous allons récupérer les coins calculés dans chaqu
   \caption{Mise en évidence des coins calculés avec la méthode goodFeaturesToTrack dans les images gauche et droite}
 \end{figure}
 %TODO voir si le fait d'avoir des points sur des lignes signifie que le point est présent dans les deux images
-On peut voir, sur le résultat, des points rouge qui correspondent aux coins calculés par la méthode goodFeaturesToTrack
+On peut voir, sur le résultat, des points rouges qui correspondent aux coins calculés par la méthode goodFeaturesToTrack
 dans l'image, ainsi que des lignes vertes qui correspondent aux coins calculés par la méthode goodFeaturesToTrack dans la
 seconde image.
  
@@ -159,8 +159,25 @@ l'image droite associée au point de l'image gauche. Pour cela nous allons effec
  \item $D_2 = F^tM_2$
 \end{enumerate}
 Dans ces opération, on a $M_1$ et $M_2$ deux matrices comportant respectivement les coordonnées des points 
-de l'image de gauche et de l'image de droite. En additionnant $D_1$ et $D_2$ nous obtenons l'ensemble des
-distances entre chaque point.
+de l'image de gauche et de l'image de droite. Ici, $D_1$ et $D_2$ sont des matrices représentant les droites
+épipolaire. Il faut ensuite calculer la distance de chaque paire de point grâce au calcul suivant :
+\begin{equation}
+ D = \frac{|ax+by+c|}{\sqrt{a^2+b^2}}
+\end{equation}
+Cela nous permet ensuite de construire une matrice avec l'ensemble des paires de point (voir \ref{distanceA}).
+
+\section{Mise en correspondance}
+Nous allons maintenant déterminer les points qui correspondent entre les deux images. Pour cela, nous 
+allons comparer les distances de chaque paire de point et nous allons appliquer deux règles qui vont 
+nous permettre de savoir si les points correspondent entre eux.
+\begin{enumerate}
+ \item La distance entre les deux points doit être inférieur à un certain seuil que nous fixons
+ \item La distance doit être la plus petite entre toute les paires de point pour un point donné
+\end{enumerate}
+Nous pouvons voir avec nos résultats que cette méthode (voire \ref{correspondance}) fonctionne, mais elle nous retourne plusieurs
+points correspondant. Cette méthode ne nous permet donc pas d'avoir une seul correspondance.
+
+\section{Conclusion}
 
 \section{Annexes}
 \subsection{Annexe A}
@@ -212,21 +229,77 @@ distances entre chaque point.
 \label{distanceA}
 \begin{lstlisting}[caption=Calcul des distances entre les points de chaque paire]
  Mat iviDistancesMatrix(const Mat& m2DLeftCorners,
-                       const Mat& m2DRightCorners,
-                       const Mat& mFundamental) {
+                        const Mat& m2DRightCorners,
+                        const Mat& mFundamental) {
+     
+     Mat D2 = mFundamental * m2DLeftCorners;
+     Mat Ft = Mat();
+     transpose(mFundamental, Ft);
+     Mat D1 = Ft * m2DRightCorners;
  
-    Mat mDistances = Mat();
-    Mat d2 = mFundamental * m2DLeftCorners;
-    Mat Ft = Mat();
-    transpose(mFundamental, Ft);
-    Mat d1 = Ft * m2DRightCorners;
-    mDistances = d1 + d2;
-    
-    return mDistances;
-}
+     int size = D1.cols;
+     Mat mDistances = Mat::eye(size, size, CV_64F);
+ 
+     for(int i=0; i<size; i++) {
+         for(int j=0; j<size; j++) {
+             double num = fabs(D1.at<double>(i,0)*m2DLeftCorners.at<double>(i,0)+D1.at<double>(i,1)*m2DLeftCorners.at<double>(i,1)+
+             D1.at<double>(i,2));
+             double denom = sqrt(D1.at<double>(i,0)*D1.at<double>(i,0)+D1.at<double>(i,1)*D1.at<double>(i,1));
+             double d1 = num/denom;
+ 
+             num = fabs(D2.at<double>(j,0)*m2DRightCorners.at<double>(j,0)+D2.at<double>(j,1)*m2DRightCorners.at<double>(j,1)+
+                 D2.at<double>(j,2));
+             denom = sqrt(D2.at<double>(j,0)*D2.at<double>(j,0)+D2.at<double>(j,1)*D2.at<double>(j,1));
+             double d2 = num/denom;
+             double distance = d1 + d2;
+             mDistances.at<double>(i,j) = distance;
+         }
+     }
+ 
+     return mDistances;
+ }
 \end{lstlisting}
 
-
+\section{Annexe D}
+\label{correspondance}
+\begin{lstlisting}[caption=Correspondance entre les points des deux images]
+ void iviMarkAssociations(const Mat& mDistances,
+                          double dMaxDistance,
+                          Mat& mRightHomologous,
+                          Mat& mLeftHomologous) {
+     
+     int size = mDistances.cols;
+     mRightHomologous = Mat::eye(1, size, CV_64F);
+     mLeftHomologous = Mat::eye(1, size, CV_64F);
+     double minValueR = std::numeric_limits<double>::infinity();
+     int minIndexR = size+1;
+     double minValueL = std::numeric_limits<double>::infinity();
+     int minIndexL = size+1;
+ 
+     for(int i=0; i<size; i++) {
+         for(int j=0; j<size; j++) {
+             double distanceR = mDistances.at<double>(i,j);
+             if(distanceR < dMaxDistance && distanceR < minValueR) {
+                 minValueR = distanceR;
+                 minIndexR = j;
+             }
+             double distanceL = mDistances.at<double>(j, i);
+             if(distanceL < dMaxDistance && distanceL < minValueL) {
+                 minValueL = distanceL;
+                 minIndexL = j;
+             }
+         }
+         if(minValueR < std::numeric_limits<double>::infinity())
+             mRightHomologous.at<double>(0,i) = minIndexR;
+         else
+             mRightHomologous.at<double>(0,i) = -1;
+         if(minValueL < std::numeric_limits<double>::infinity())
+             mLeftHomologous.at<double>(0,i) = minIndexL;
+         else
+             mLeftHomologous.at<double>(0,i) = -1;
+     }
+ }
+\end{lstlisting}
 \bibliographystyle{plain}
 \bibliography{bibli} 
 
