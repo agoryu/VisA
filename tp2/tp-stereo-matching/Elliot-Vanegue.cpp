@@ -176,6 +176,7 @@ void iviMarkAssociations(const Mat& mDistances,
     double minValueL = std::numeric_limits<double>::infinity();
     int minIndexL = size+1;
 
+    dMaxDistance = 4;
     for(int i=0; i<size; i++) {
         for(int j=0; j<size; j++) {
             double distanceR = mDistances.at<double>(i,j);
