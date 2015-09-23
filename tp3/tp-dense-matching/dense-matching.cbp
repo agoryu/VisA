@@ -37,8 +37,8 @@
 		<Unit filename="dense-matching.cpp" />
 		<Unit filename="glue.cpp" />
 		<Unit filename="glue.hpp" />
-		<Unit filename="prenom-nom.cpp" />
-		<Unit filename="prenom-nom.hpp" />
+		<Unit filename="Elliot-Vanegue.cpp" />
+		<Unit filename="Elliot-Vanegue.hpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
