@@ -59,11 +59,11 @@
 Lors de ce TP, nous allons reconstituer la troisième dimension d'une image
 qui a été perdue suite à la projection de celle-ci. Pour cela, nous allons 
 utiliser la stéréovision afin de reconstruire la troisième dimension de certains points à
-partir de deux images dont les angles de vues sont différents.
+partir de deux images dont les angles de vue sont différents.
 
 \section{Calcul de la matrice fondamentale}
 La matrice fondamentale contient l'ensemble des informations de la géométrie épipolaire.
-Elle est constitué de sept degrès de liberté. Cette géométrie décrit les relations entre
+Elle est constituée de sept degrès de liberté. Cette géométrie décrit les relations entre
 différentes photographies du même objet. Pour la calculer, il faut utiliser la formule suivante :
 \begin{equation}
  F=(P_2O_1)^xP_2P^+_1
@@ -87,7 +87,7 @@ les matrices de projection $P_1$ et $P_2$ qui sont respectivement la multiplicat
 intrinsèque et extrinsèque de l'image de gauche et de l'image de droite. Il faut
 d'abord multiplier la matrice extrinsèque par la matrice $\begin{pmatrix} 1&0&0&0\\0&1&0&0\\0&0&1&0\end{pmatrix}$,
 car la matrice extrinsèque est de la forme 4x3 alors que la matrice intrinsèque est de la forme
-3x3. Ce qui nous donne le calcul suivant :
+3x3, ce qui nous donne le calcul suivant :
 \begin{align}
  &P_1 = mLeftIntrinsic * \begin{pmatrix} 1&0&0&0\\0&1&0&0\\0&0&1&0\end{pmatrix} * mLeftExtrinsic\\
  &P_2 = mRightIntrinsic * \begin{pmatrix} 1&0&0&0\\0&1&0&0\\0&0&1&0\end{pmatrix} * mRightExtrinsic
@@ -101,7 +101,7 @@ fondamentale avec le calcul \eqref{fondamentale}(voir \ref{Afondamentale}).
 
 \section{Détermination d'équations de droite}
 Grâce au calcul de la droite fondamentale, il est possible de déterminer les équations de droite
-allant d'une image au centre de la second. Nous allons donc déterminer ces équations.
+allant d'une image au centre de la seconde. Nous allons donc déterminer ces équations.
 \begin{itemize}
  \item Equation de la droite épipolaire de l'image droite associée au centre de l'image de gauche :
  $F=(P_2\begin{pmatrix}u_1\\v_1\\1\end{pmatrix})^xP_2P^+_1$
@@ -114,7 +114,7 @@ allant d'une image au centre de la second. Nous allons donc déterminer ces équ
 \section{Extraction des coins}
 Nous allons maintenant mettre en évidence des pixels d'intérêt dans les deux images pour réaliser une mise
 en correspondance stéréoscopique. Pour cela, nous allons utiliser la méthode de Jianbo Shi et Carlo Tomasi\cite{323794}
-déjà implémenté dans la librairie OpenCV. Voici la fonction permettant de récupérer l'ensemble des coins calculés
+déjà implémentée dans la librairie OpenCV. Voici la fonction permettant de récupérer l'ensemble des coins calculés
 par la fonction goodFeaturesToTrack :
 \begin{lstlisting}[caption=Calcul des coins]
  Mat iviDetectCorners(const Mat& mImage,
@@ -149,39 +149,39 @@ dans l'image, ainsi que des lignes vertes qui correspondent aux coins calculés 
 seconde image.
  
 \section{Calcul des distances}
-Nous allons maintenant calculer la distance entre chaque paire de point afin de pouvoir déterminer
-les meilleurs correspondances. Pour cela, nous devons calculer deux distances différentes, puis les 
+Nous allons maintenant calculer la distance entre chaque paire de points afin de pouvoir déterminer
+les meilleures correspondances. Pour cela, nous devons calculer deux distances différentes, puis les 
 additionner pour avoir le résultat final. La première distance à calculer est celle entre le point de l'image gauche et la droite épipolaire 
 de l'image gauche associée au point de l'image droite. Et la seconde est celle entre le point de l'image droite et la droite épipolaire de 
-l'image droite associée au point de l'image gauche. Pour cela nous allons effectuer les calcules suivants :
+l'image droite associée au point de l'image gauche. Pour cela nous allons effectuer les calculs suivants :
 \begin{enumerate}
  \item $D_1 = FM_1$
  \item $D_2 = F^tM_2$
 \end{enumerate}
-Dans ces opération, on a $M_1$ et $M_2$ deux matrices comportant respectivement les coordonnées des points 
+Dans ces opérations, on a $M_1$ et $M_2$ deux matrices comportant respectivement les coordonnées des points 
 de l'image de gauche et de l'image de droite. Ici, $D_1$ et $D_2$ sont des matrices représentant les droites
-épipolaire. Il faut ensuite calculer la distance de chaque paire de point grâce au calcul suivant :
+épipolaires. Il faut ensuite calculer la distance de chaque paire de points grâce au calcul suivant :
 \begin{equation}
  D = \frac{|ax+by+c|}{\sqrt{a^2+b^2}}
 \end{equation}
-Cela nous permet ensuite de construire une matrice avec l'ensemble des paires de point (voir \ref{distanceA}).
+Cela nous permet ensuite de construire une matrice avec l'ensemble des paires de pointe (voir \ref{distanceA}).
 
 \section{Mise en correspondance}
 Nous allons maintenant déterminer les points qui correspondent entre les deux images. Pour cela, nous 
-allons comparer les distances de chaque paire de point et nous allons appliquer deux règles qui vont 
+allons comparer les distances de chaque paire de points et nous allons appliquer deux règles qui vont 
 nous permettre de savoir si les points correspondent entre eux.
 \begin{enumerate}
- \item La distance entre les deux points doit être inférieur à un certain seuil que nous fixons
- \item La distance doit être la plus petite entre toute les paires de point pour un point donné
+ \item La distance entre les deux points doit être inférieure à un certain seuil que nous fixons.
+ \item La distance doit être la plus petite entre toutes les paires de points pour un point donné.
 \end{enumerate}
-Nous pouvons voir avec nos résultats que cette méthode (voire \ref{correspondance}) fonctionne, mais elle nous retourne plusieurs
-points correspondant. Cette méthode ne nous permet donc pas d'avoir une seul correspondance. Cependant, on voit que nous avons
+Nous pouvons voir avec nos résultats que cette méthode (voir \ref{correspondance}) fonctionne, mais elle nous retourne plusieurs
+points correspondants. Cette méthode ne nous permet donc pas d'avoir une seule correspondance. Cependant, on voit que nous n'avons
 que deux points dans chaque image qui sont occultés.
 
 \section{Conclusion}
 La méthode utilisant la stéréovision pour reconstruire la troisième dimension des points d'une image
-ne nous à donc pas permis de faire une correspondance entre les points de deux images. Mais il nous permet
-de connaitre les points qui sont occulté.
+ne nous a donc pas permis de faire une correspondance entre les points de deux images. Mais il nous permet
+de connaitre les points qui sont occultés.
 \section{Annexes}
 \subsection{Annexe A}
 \label{AproduitVector}

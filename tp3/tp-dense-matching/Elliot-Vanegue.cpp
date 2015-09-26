@@ -118,31 +118,32 @@ Mat iviComputeLeftSSDCost(const Mat& mLeftGray,
                           int iWindowHalfSize) {
     Mat mLeftSSDCost(mLeftGray.size(), CV_64F);
     // A completer!
-    int sizeX = mLeftGray.size().height;
-    int sizeY = mLeftGray.size().width;
+    int sizeX = mLeftGray.cols - iWindowHalfSize;
+    int sizeY = mLeftGray.rows - iWindowHalfSize;
 
-    for(int x = iWindowHalfSize;  x < sizeX - iWindowHalfSize; x++) {
-        for(int y = iWindowHalfSize; y < sizeY - iWindowHalfSize; y++) {
-            mLeftSSDCost.at<unsigned char>(x,y) = 0;
+    for(int x = iWindowHalfSize;  x < sizeX; x++) {
+        for(int y = iWindowHalfSize; y < sizeY; y++) {
+            
+            double ssd = 0.0;
+
             for(int i = -iWindowHalfSize; i < iWindowHalfSize; i++) {
                 for(int j = -iWindowHalfSize; j < iWindowHalfSize; j++) {
-                    //cout << "x:"<<x<<" y:"<<y<<" i:"<<i<<" j:"<<j<<endl;
+                    
                     if(x - iShift >= iWindowHalfSize) {
-                        double il = mLeftGray.at<unsigned char>(x+i, y+j);
-                        double ir = mRightGray.at<unsigned char>(x+i-iShift, y+j);
+
+                        double il = (double)mLeftGray.at<unsigned char>(y+i, x+j);
+                        double ir = (double)mRightGray.at<unsigned char>(y+i, x+j-iShift);
                         
-                        mLeftSSDCost.at<unsigned char>(x,y) += pow(il - ir, 2.0);
+                        ssd += pow(il - ir, 2.0);
                         
                     }
-                    //else
-                        //mLeftSSDCost.at<unsigned char>(x,y) = pow((unsigned char)(2 * iWindowHalfSize + 1), 2.0) * 512.0;
                 }
             }
+
+            mLeftSSDCost.at<double>(y,x) = ssd;
         }
     }
  
-    //normalize(mLeftSSDCost, mLeftSSDCost);
-    //imshow("toto", mLeftSSDCost);    
     return mLeftSSDCost;
 }
 
@@ -161,8 +162,60 @@ Mat iviRightDisparityMap(const Mat& mLeftGray,
                          const Mat& mRightGray,
                          int iMaxDisparity,
                          int iWindowHalfSize) {
-Mat mRightDisparityMap(mLeftGray.size(), CV_8U);
+    Mat mRightDisparityMap(mLeftGray.size(), CV_8U);
     // A completer!
+    Mat mSSD(mRightGray.size(), CV_64F);
+    Mat mMinSSD(mRightGray.size(), CV_64F);
+    double dMinSSD, *pdPtr1, *pdPtr2;
+    unsigned char *pucDisparity;
+    int iShift, iRow, iCol;
+
+    // Initialisation de l'image du minimum de SSD
+    dMinSSD = pow((double)(2 * iWindowHalfSize + 1), 2.0) * 512.0;
+    for (iRow = iWindowHalfSize;
+        iRow < mMinSSD.size().height - iWindowHalfSize;
+        iRow++) {
+        // Pointeur sur le debut de la ligne
+        pdPtr1 = mMinSSD.ptr<double>(iRow);
+        // Sauter la demi fenetre non utilisee
+        pdPtr1 += iWindowHalfSize;
+        // Remplir le reste de la ligne
+        for (iCol = iWindowHalfSize;
+            iCol < mMinSSD.size().width - iWindowHalfSize;
+            iCol++)
+                *pdPtr1++ = dMinSSD;
+    }
+    // Boucler pour tous les decalages possibles
+    for (iShift = 0; iShift < iMaxDisparity; iShift++) {
+        // Calculer le cout SSD pour ce decalage
+        mSSD = iviComputeRightSSDCost(mRightGray, mLeftGray,
+                                     iShift, iWindowHalfSize);
+        // Mettre a jour les valeurs minimales
+        for (iRow = iWindowHalfSize;
+            iRow < mMinSSD.size().height - iWindowHalfSize;
+            iRow++) {
+            // Pointeurs vers les debuts des lignes
+            pdPtr1 = mMinSSD.ptr<double>(iRow);
+            pdPtr2 = mSSD.ptr<double>(iRow);
+            pucDisparity = mRightDisparityMap.ptr<unsigned char>(iRow);
+            // Sauter la demi fenetre non utilisee
+            pdPtr1 += iWindowHalfSize;
+            pdPtr2 += iWindowHalfSize;
+            pucDisparity += iWindowHalfSize;
+            // Comparer sur le reste de la ligne
+            for (iCol = iWindowHalfSize;
+                iCol < mMinSSD.size().width - iWindowHalfSize;
+                iCol++) {
+                // SSD plus faible que le minimum precedent
+                if (*pdPtr1 > *pdPtr2) {
+                    *pucDisparity = (unsigned char)iShift;
+                    *pdPtr1 = *pdPtr2;
+                }
+                // Pixels suivants
+                pdPtr1++; pdPtr2++; pucDisparity++;
+            }
+        }
+    }
     return mRightDisparityMap;
 }
 
@@ -181,8 +234,33 @@ Mat iviComputeRightSSDCost(const Mat& mLeftGray,
                            const Mat& mRightGray,
                            int iShift,
                            int iWindowHalfSize) {
-Mat mRightSSDCost(mLeftGray.size(), CV_64F);
+    Mat mRightSSDCost(mLeftGray.size(), CV_64F);
     // A completer!
+    int sizeX = mRightGray.cols - iWindowHalfSize;
+    int sizeY = mRightGray.rows - iWindowHalfSize;
+
+    for(int x = iWindowHalfSize;  x < sizeX; x++) {
+        for(int y = iWindowHalfSize; y < sizeY; y++) {
+            
+            double ssd = 0.0;
+
+            for(int i = -iWindowHalfSize; i < iWindowHalfSize; i++) {
+                for(int j = -iWindowHalfSize; j < iWindowHalfSize; j++) {
+                    
+                    if(x - iShift >= iWindowHalfSize) {
+
+                        double il = (double)mLeftGray.at<unsigned char>(y+i, x+j-iShift);
+                        double ir = (double)mRightGray.at<unsigned char>(y+i, x+j);
+                        
+                        ssd += pow(ir - il, 2.0);
+                        
+                    }
+                }
+            }
+
+            mRightSSDCost.at<double>(y,x) = ssd;
+        }
+    }
     return mRightSSDCost;
 }
 
@@ -198,7 +276,16 @@ Mat mRightSSDCost(mLeftGray.size(), CV_64F);
 Mat iviLeftRightConsistency(const Mat& mLeftDisparity,
                             const Mat& mRightDisparity,
                             Mat& mValidityMask) {
-Mat mDisparity(mLeftDisparity.size(), CV_8U);
+    Mat mDisparity(mLeftDisparity.size(), CV_8U);
+
+    int sizeX = mRightDisparity.cols;
+    int sizeY = mRightDisparity.rows;
+
+    /*for(int x = 0;  x < sizeX; x++) {
+        for(int y = 0; y < sizeY; y++) {
+            mDisparity.at<double>(y,x) = (double)mLeftDisparity.at<unsigned char>(y,x) - mRightDisparity.at<unsigned char>(y,x);
+        }
+    }*/
     // A completer!
     return mDisparity;
 }

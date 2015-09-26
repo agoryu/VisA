@@ -135,6 +135,7 @@ int main(int argc, char **argv) {
     // Calcul de la carte de disparite avec l'image droite comme reference
     mRightDisparity = iviRightDisparityMap(mLeftGray, mRightGray,
                                            iMaxDisparity, iWindowHalfSize);
+ 
     // Verification gauche droite
     mDisparity = iviLeftRightConsistency(mLeftDisparity, mRightDisparity,
                                           mValidityMask);
@@ -171,6 +172,8 @@ int main(int argc, char **argv) {
         imshow("Right disparity", mRightDisparity);
         imshow("Disparity", mDisparity);
         imshow("Validity mask", mValidityMask);
+        imwrite("leftDisparity.png", mLeftDisparity);
+        imwrite("rightDisparity.png", mRightDisparity);
     }
 
     // Si affichage, attendre l'appui sur une touche
