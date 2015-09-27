@@ -138,11 +138,55 @@ important dans les deux images.\\
  \caption{Disparité de l'image gauche et de l'image droite}
 \end{figure}
 On peut voir apparaître, sur ces deux images, la forme de la statue et de la lampe qui sont
-tous les deux les objets qui semble être les plus proches des objectifs dans les images.
+tous les deux les objets qui semblent être les plus proches des objectifs dans les images.
 
 \section{Vérification gauche-droite}
 Maintenant que nous avons calculé les disparités des deux images, nous effectuons une vérification
-de cohérence gauche-droite.
+de cohérence gauche-droite. Pour cela, il suffit de vérifier que la valeur d'un pixel à une position (x,y)
+dans l'image gauche est égale à la valeur du même pixel (x+shift,y) dans l'image droite. La valeur
+shift étant la disparité du pixel de l'image droite en (x,y). Si les pixels de l'image gauche et de 
+l'image droite ont la même valeur on met un 0 dans le masque à la position du pixel dans l'image gauche,
+sinon on met la valeur 255. Voici le code correspondant à cette méthode :
+\begin{lstlisting}[caption=Vérification de cohérence gauche-droite]
+Mat iviLeftRightConsistency(const Mat& mLeftDisparity,
+                             const Mat& mRightDisparity,
+                             Mat& mValidityMask) {
+     Mat mDisparity(mLeftDisparity.size(), CV_8U);
+ 
+     int sizeX = mRightDisparity.cols;
+     int sizeY = mRightDisparity.rows;
+ 
+     for(int x = 0;  x < sizeX; x++) {
+         for(int y = 0; y < sizeY; y++) {
+             double left = (double)mLeftDisparity.at<unsigned char>(y,x);
+             double shift = (double)mRightDisparity.at<unsigned char>(y,x);
+             double right = (double)mRightDisparity.at<unsigned char>(y,x+shift);
+             if(left >= right-1 && left <= right+1) {
+                 mValidityMask.at<unsigned char>(y,x) = 0;
+                 mDisparity.at<unsigned char>(y,x) = left;
+             } else {
+                 mValidityMask.at<unsigned char>(y,x) = 255;
+                 mDisparity.at<unsigned char>(y,x) = 255;
+             }
+         }
+     }
+     return mDisparity;
+ }
+\end{lstlisting}
+
+\begin{figure}[!h]
+ \centering
+ \includegraphics[width=7cm]{validityMask.png}
+ \caption{Résultat de la vérification de cohérence gauche-droite}
+\end{figure}
+
+On voit que le résultat comporte beaucoup de pixel noire, ce qui signifie que la vérification est correcte.
+Les pixels blancs qui nous permettent de distinguer les formes de la statue et de la lampe sont des faux appariements
+du aux pixels occultés.
+
+\section{Conclusion}
+La méthode que nous avons analysée lors de ce TP est très efficace pour déterminer les pixels occultés, mais elle nécessite
+d'avoir de l'équipement bien réglé afin d'obtenir des matrices intrinsèques équivalentes pour les deux objectifs.
 \newpage
 \section{Annexes}
 \subsection{Annexe A}

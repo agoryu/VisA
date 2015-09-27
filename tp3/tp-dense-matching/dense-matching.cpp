@@ -172,8 +172,9 @@ int main(int argc, char **argv) {
         imshow("Right disparity", mRightDisparity);
         imshow("Disparity", mDisparity);
         imshow("Validity mask", mValidityMask);
-        imwrite("leftDisparity.png", mLeftDisparity);
-        imwrite("rightDisparity.png", mRightDisparity);
+        //imwrite("leftDisparity.png", mLeftDisparity);
+        //imwrite("rightDisparity.png", mRightDisparity);
+        imwrite("validityMask.png", mValidityMask);
     }
 
     // Si affichage, attendre l'appui sur une touche

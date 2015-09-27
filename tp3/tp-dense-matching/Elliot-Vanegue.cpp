@@ -281,11 +281,19 @@ Mat iviLeftRightConsistency(const Mat& mLeftDisparity,
     int sizeX = mRightDisparity.cols;
     int sizeY = mRightDisparity.rows;
 
-    /*for(int x = 0;  x < sizeX; x++) {
+    for(int x = 0;  x < sizeX; x++) {
         for(int y = 0; y < sizeY; y++) {
-            mDisparity.at<double>(y,x) = (double)mLeftDisparity.at<unsigned char>(y,x) - mRightDisparity.at<unsigned char>(y,x);
+            double left = (double)mLeftDisparity.at<unsigned char>(y,x);
+            double shift = (double)mRightDisparity.at<unsigned char>(y,x);
+            double right = (double)mRightDisparity.at<unsigned char>(y,x+shift);
+            if(left >= right-1 && left <= right+1) {
+                mValidityMask.at<unsigned char>(y,x) = 0;
+                mDisparity.at<unsigned char>(y,x) = left;
+            } else {
+                mValidityMask.at<unsigned char>(y,x) = 255;
+                mDisparity.at<unsigned char>(y,x) = 255;
+            }
         }
-    }*/
-    // A completer!
+    }
     return mDisparity;
 }
