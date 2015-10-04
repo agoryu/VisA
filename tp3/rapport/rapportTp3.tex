@@ -58,27 +58,27 @@
 \section{Introduction}
 Lors du TP précédent, nous avons utilisé la méthode de stéréovision afin de 
 déterminer la troisième dimension de plusieurs points dans une image. Nous 
-avons rencontré des difficultées, car les paramètres intrinsèques de la 
+avons rencontré des difficultés, car les paramètres intrinsèques de la 
 caméra étaient différents pour les deux images que nous avons analysées.
 Dans ce TP, nous utilisons une configuration canonique d'un stéréoscope,
 c'est-à-dire que les paramètres instrinsèques sont les mêmes pour les deux
-images étudiées, que les axes optiques sont parallèles, les deux capteurs
+images étudiées, que les axes optiques sont parallèles, que les deux capteurs
 sont coplanaires et que les lignes horizontales des capteurs sont confondues.
 
 \section{Similarité par SSD}
 Nous analysons d'abord la fonction qui permet de calculer la disparité entre 
 les points de deux images. La disparité est la différence entre les abscisses de
-deux points homologues, l'ordonné n'étant pas importantes selon la dernière propriété
-énoncé dans l'introduction. Pour calculer cette valeur, nous utilisons le calcul de
+deux points homologues, l'ordonnée n'étant pas importante selon la dernière propriété
+énoncée dans l'introduction. Pour calculer cette valeur, nous utilisons le calcul de
 la SSD\footnote{sum of squared differences}. Dans cette fonction de calcul de la disparité, 
-nous nous intéressons tout d'abord à deux variables défini dans le code :
+nous nous intéressons tout d'abord à deux variables définies dans le code :
 \begin{itemize}
  \item mSSD qui est une variable permettant de calculer la disparité entre deux points.
- \item mMinSSD qui est une matrice regroupant les disparités minimum les points des deux images.
+ \item mMinSSD qui est une matrice regroupant les disparités minimum dans une image.
 \end{itemize}
 Nous pouvons voir que les pointeurs permettant de traiter chaque point des images
 ne commencent pas à 0 et ne se terminent pas à la taille de l'image, car celle-ci
-contient des rebords qui peuvents fausser les résultats.\\
+contient des rebords qui peuvent fausser les résultats.\\
 
 Nous allons maintenant voir dans le détail comment le calcul de la SSD a été développé
 dans le programme pour l'image de gauche. Voici tout d'abord le calcul de la SSD :
@@ -123,11 +123,11 @@ Mat iviComputeLeftSSDCost(const Mat& mLeftGray,
      return mLeftSSDCost;
  }
 \end{lstlisting}
-Ce calcul est très similaire pour l'image de droite, il y a donc peut de modification entre
-les deux méthodes (voir \ref{imageDroite}). Pour que le résultat soit visible il faut faire
+Ce calcul est très similaire pour l'image de droite, il y a donc peu de modifications entre
+les deux méthodes (voir \ref{imageDroite}). Pour que le résultat soit visible, il faut faire
 appel à deux méthodes. Tout d'abord la méthode minMaxLoc afin de déterminer quel est le 
 minimum et le maximum des valeurs présentes dans la matrice de disparité de chaque image.
-Ensuite, il faut utiliser normalize qui va permettre de normalize l'image et donc d'étaler
+Ensuite, il faut utiliser normalize qui va permettre de normaliser l'image et donc d'étaler
 l'histogramme de gris de l'image de 0 à 255. Cela nous permet d'avoir un contraste plus 
 important dans les deux images.\\
 
@@ -138,14 +138,14 @@ important dans les deux images.\\
  \caption{Disparité de l'image gauche et de l'image droite}
 \end{figure}
 On peut voir apparaître, sur ces deux images, la forme de la statue et de la lampe qui sont
-tous les deux les objets qui semblent être les plus proches des objectifs dans les images.
+toutes les deux des objets qui semblent être les plus proches des objectifs dans les images.
 
 \section{Vérification gauche-droite}
 Maintenant que nous avons calculé les disparités des deux images, nous effectuons une vérification
 de cohérence gauche-droite. Pour cela, il suffit de vérifier que la valeur d'un pixel à une position (x,y)
-dans l'image gauche est égale à la valeur du même pixel (x+shift,y) dans l'image droite. La valeur
-shift étant la disparité du pixel de l'image droite en (x,y). Si les pixels de l'image gauche et de 
-l'image droite ont la même valeur on met un 0 dans le masque à la position du pixel dans l'image gauche,
+dans l'image de gauche est égale à la valeur du même pixel (x+shift,y) dans l'image de droite. La valeur
+shift étant la disparité du pixel de l'image de droite en (x,y). Si les pixels de l'image de gauche et de 
+l'image de droite ont la même valeur, on met un 0 dans le masque à la position du pixel dans l'image de gauche,
 sinon on met la valeur 255. Voici le code correspondant à cette méthode :
 \begin{lstlisting}[caption=Vérification de cohérence gauche-droite]
 Mat iviLeftRightConsistency(const Mat& mLeftDisparity,
@@ -180,9 +180,9 @@ Mat iviLeftRightConsistency(const Mat& mLeftDisparity,
  \caption{Résultat de la vérification de cohérence gauche-droite}
 \end{figure}
 
-On voit que le résultat comporte beaucoup de pixel noire, ce qui signifie que la vérification est correcte.
+On voit que le résultat comporte beaucoup de pixels noirs, ce qui signifie que la vérification est correcte.
 Les pixels blancs qui nous permettent de distinguer les formes de la statue et de la lampe sont des faux appariements
-du aux pixels occultés.
+dûs aux pixels occultés.
 
 \section{Conclusion}
 La méthode que nous avons analysée lors de ce TP est très efficace pour déterminer les pixels occultés, mais elle nécessite
