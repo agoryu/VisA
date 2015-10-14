@@ -1,0 +1,71 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+%pour les equations
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+%pour les images
+\usepackage{graphicx}
+
+% pour definir des couleurs
+\usepackage{xcolor}
+
+% pour inclure du code
+\usepackage{listings}
+
+% code color
+\definecolor{ligthyellow}{RGB}{250,247,220}
+\definecolor{darkblue}{RGB}{5,10,85}
+\definecolor{ligthblue}{RGB}{1,147,128}
+\definecolor{darkgreen}{RGB}{8,120,51}
+\definecolor{darkred}{RGB}{160,0,0}
+
+\lstset{
+    language=C++,
+    captionpos=b,
+    extendedchars=true,
+    frame=lines,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    keepspaces=true,
+    breaklines=true,
+    showspaces=false,
+    showstringspaces=false,
+    breakatwhitespace=false,
+    stepnumber=1,
+    showtabs=false,
+    tabsize=3,
+    basicstyle=\small\ttfamily,
+    backgroundcolor=\color{ligthyellow},
+    keywordstyle=\color{ligthblue},
+    morekeywords={include, printf, uchar},
+    identifierstyle=\color{darkblue},
+    commentstyle=\color{darkgreen},
+    stringstyle=\color{darkred},
+}
+
+%opening
+\title{Analyse et traitement 3D}
+\author{Elliot Vanegue}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Lors de ce TP, nous avons étudié l'algorithme \textit{Iterative Closest Point}\footnote{ICP} qui est un algorithme de
+recalage de forme 3D. Ce type de procédé permet entre autre de comparer des modèles 3D ou encore pour des application 
+de réassemblage de surface.
+
+\section{Principe}
+Le principe de l'algorithme est de minimiser la distance entre deux nuages de point.
+
+\section{Théorème}
+
+\section{Réalisation}
+
+\section{Conclusion}
+\end{document}
