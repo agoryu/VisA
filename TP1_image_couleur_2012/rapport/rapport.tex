@@ -1,0 +1,74 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+%pour les equations
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+%pour les images
+\usepackage{graphicx}
+
+% pour definir des couleurs
+\usepackage{xcolor}
+
+% pour inclure du code
+\usepackage{listings}
+
+% code color
+\definecolor{ligthyellow}{RGB}{250,247,220}
+\definecolor{darkblue}{RGB}{5,10,85}
+\definecolor{ligthblue}{RGB}{1,147,128}
+\definecolor{darkgreen}{RGB}{8,120,51}
+\definecolor{darkred}{RGB}{160,0,0}
+
+\lstset{
+    language=C++,
+    captionpos=b,
+    extendedchars=true,
+    frame=lines,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    keepspaces=true,
+    breaklines=true,
+    showspaces=false,
+    showstringspaces=false,
+    breakatwhitespace=false,
+    stepnumber=1,
+    showtabs=false,
+    tabsize=3,
+    basicstyle=\small\ttfamily,
+    backgroundcolor=\color{ligthyellow},
+    keywordstyle=\color{ligthblue},
+    morekeywords={include, printf, uchar},
+    identifierstyle=\color{darkblue},
+    commentstyle=\color{darkgreen},
+    stringstyle=\color{darkred},
+}
+
+%opening
+\title{Image Couleur}
+\author{Elliot Vanegue}
+
+\begin{document}
+
+\maketitle
+\section{Introduction}
+
+\section{Manipulation luminance}
+Nous allons dans un premier comparer deux images dont l'information de luminance est différente.
+Pour effectuer cette comparaison, nous allons devoir utiliser un autre espace colorimètrique qui
+sait représenter cette information. Plusieurs espaces sont disponible comme le YUV ou le HSV.
+Dans notre cas, nous allons prendre l'espace HSV dont la valeur (\enquote{value}) représente 
+la luminance présente dans l'image.
+
+%TODO ajout des images
+
+On voit clairement que l'image qui est plus sombre ne possède pas de pixel dans le haut du conne
+HSV.
+
+2) Meilleur valeur -> 37 - 40
+
+
+\end{document}

@@ -1,0 +1,42 @@
+// Une macro-squelette pour la couleur.
+// Version: 0.1
+// Date: 14/09/2011
+// Author: L. Macaire
+ 
+macro "augmentation_luminance" {
+
+// récupération du ID de l'image
+image = getImageID();
+
+valeur = getNumber ("quelle augmentation (absolue) de luminance",valeur);
+
+if(valeur > 255) 
+    valeur = 255;
+
+Dialog.create("Debut");
+Dialog.addMessage(" Cliquer sur OK pour commencer le traitement ");
+Dialog.show();
+
+
+setBatchMode(true);
+
+
+// récupération de la taille W x H du plan de fourier
+W = getWidth();
+H = getHeight();
+
+run("Duplicate...", "title=saturation augmentée");
+image_saturation_aug = getImageID();
+run("Color Space Converter...", "from ColorSpace=RGB to ColorSpace=HSB white Point=D65");
+run("Split Channels...");
+//TODO traitement sur les image
+run("Merge Channels..."); //TODO ajout en argument des nouvelle images
+
+setBatchMode(false);
+
+Dialog.create("Fin");
+Dialog.addMessage(" Cliquer sur OK pour terminer le traitement");
+Dialog.show();
+
+
+}
