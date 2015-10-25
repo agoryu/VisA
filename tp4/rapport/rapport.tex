@@ -61,8 +61,9 @@ recalage de forme 3D. Ce type de procédé permet entre autre de comparer des mo
 de réassemblage de surface.
 
 \section{Principe}
-Le principe de l'algorithme est de minimiser la distance entre deux nuages de point. Pour cela l'algorithme se base 
-sur quatre grande étape.
+Le principe de l'algorithme est de minimiser la distance entre deux nuages de point. Pour cela l'algorithme a besoin
+des points bruts de deux balayage, une première estimation de la transformation et les critères d'arrêt de l'itération.
+L'algorithme fonctionne en quatre étapes.
 \begin{itemize}
  \item On associe les points grâce aux critère du plus proche voisin. Pour cela, il suffit de calculer la distance
  d'un point avec tous les autres points qui font parti sur nuage de point que nous voulons comparer.
