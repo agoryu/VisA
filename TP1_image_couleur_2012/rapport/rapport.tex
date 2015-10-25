@@ -15,6 +15,8 @@
 % pour inclure du code
 \usepackage{listings}
 
+\usepackage{csquotes}
+
 % code color
 \definecolor{ligthyellow}{RGB}{250,247,220}
 \definecolor{darkblue}{RGB}{5,10,85}
@@ -55,20 +57,35 @@
 
 \maketitle
 \section{Introduction}
+\paragraph{}Le but de ce TP est d'observer l'impacte de la luminance et de la saturation sur les informations
+contenues dans une image. Pour cela, nous allons travailler avec ImageJ et deux plug in fourni pour
+ce TP.
 
 \section{Manipulation luminance}
-Nous allons dans un premier comparer deux images dont l'information de luminance est différente.
+\paragraph{}Nous allons dans un premier comparer deux images, l'une étant plus sombre que l'autre.
+La clarté d'une image dépend de l'information de luminance.
 Pour effectuer cette comparaison, nous allons devoir utiliser un autre espace colorimètrique qui
 sait représenter cette information. Plusieurs espaces sont disponible comme le YUV ou le HSV.
 Dans notre cas, nous allons prendre l'espace HSV dont la valeur (\enquote{value}) représente 
-la luminance présente dans l'image.
+la luminance présente dans l'image.\\
 
 %TODO ajout des images
 
-On voit clairement que l'image qui est plus sombre ne possède pas de pixel dans le haut du conne
-HSV.
+On voit clairement que la plus grande valeur de luminance de l'image sombre est bien inférieur
+à la valeur maximum de l'image plus claire. En effet, l'image qui est plus sombre ne possède pas de pixel dans le haut du conne
+HSV.\\
 
-2) Meilleur valeur -> 37 - 40
+Nous allons maintenant essayer de transformer l'image la plus sombre en l'image originale. Pour cela,
+nous allons simplement ajouter une valeur identique dans les trois canaux RGB. Etant donné que la valeur 255
+représente le blanc, il est possible d'éclaircir l'image en rapprochant la valeur de chaque canaux de la valeur 255.
 
+%TODO affichage des résultats de chaque image
+\begin{tabular}{|c|c|c|}
+ 
+\end{tabular}
+
+%TODO question 4 a voir
+
+\section{Rétablissement de la saturation}
 
 \end{document}
