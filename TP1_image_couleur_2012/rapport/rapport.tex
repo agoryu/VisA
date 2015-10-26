@@ -69,7 +69,13 @@ sait représenter cette information. Plusieurs espaces sont disponible comme le 
 Dans notre cas, nous allons prendre l'espace HSV dont la valeur (\enquote{value}) représente 
 la luminance présente dans l'image.\\
 
-%TODO ajout des images
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[width=4cm]{resultat/luminance1.png}
+ \includegraphics[width=4cm]{resultat/luminance2.png}
+ \caption{Graphique de l'espace colorimétrique HSV des images \textit{it1\_72pp} et \textit{it1\_72pp\_sombre}}
+ \end{center}
+\end{figure}
 
 On voit clairement que la plus grande valeur de luminance de l'image sombre est bien inférieur
 à la valeur maximum de l'image plus claire. En effet, l'image qui est plus sombre ne possède pas de pixel dans le haut du conne
@@ -92,10 +98,40 @@ la saturation est faible et plus la couleur paraît fade. Pour mettre en éviden
 l'espace colorimètrique HSV des images \textit{it2\_72pp} et \textit{it2\_72\_gris}, dont la première est plus saturé
 que la seconde.\\
 
-%TODO mettre les images hsv de la saturation
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[width=4cm]{resultat/saturation1.png}
+ \includegraphics[width=4cm]{resultat/saturation2.png}
+ \caption{Graphique de l'espace colorimétrique HSV des images \textit{it2\_72pp} et \textit{it2\_72\_gris}}
+ \end{center}
+\end{figure}
 
 Sur ces images, l'information de saturation est représenté sur l'axe des x. On voit que sur l'image \textit{it2\_72\_gris} la
-valeur de la saturation reste à 0, ce qui fait que l'ensemble des pixels restent au centre du conne.
+valeur de la saturation reste à 0, ce qui fait que l'ensemble des pixels restent au centre du conne. On voit qu'il n'est pas
+possible de transformer l'image \textit{it2\_72\_gris} en l'image \textit{it2\_72pp}, car l'information \textit{value} n'est pas
+connu et l'image ne changerai pas si on modifiait la saturation. C'est pourquoi nous utiliserons l'image \textit{it2\_72\_saturation\_faible}
+pour nos test sur le changement de la saturation. Voici dans un premier temps les graphiques des image dans le modèle HSB.
+
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[width=4cm]{resultat/saturation1_2.png}
+ \includegraphics[width=4cm]{resultat/saturation2_2.png}
+ \caption{Graphique de l'espace colorimétrique HSB des images \textit{it2\_72pp} et \textit{it2\_72\_saturation\_faible}}
+ \end{center}
+\end{figure}
+\newpage
+
+On voit avec ces graphique que l'image \textit{it2\_72\_saturation\_faible} possède un \textit{value} différent de 0, donc si on 
+multiplie la saturation par une valeur défini il est possible de retrouver l'image \textit{it2\_72pp}. Cependant, on voit que 
+la saturation n'est pas la seul valeur qui différencie les deux images, la luminance est également très différente. En multipliant
+la saturation par 1,3 nous obtenons le résultats suivant :
+
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[width=4cm]{resultat/resultat_saturation.png}
+ \caption{Résultat de la modification de la saturation}
+ \end{center}
+\end{figure}
 
 \section{Transformation de la teinte}
 La teinte est la forme la plus pure d'une couleur. Ce qui signifie qu'elle ne peut pas représenté le blanc, le noire ou le gris.
