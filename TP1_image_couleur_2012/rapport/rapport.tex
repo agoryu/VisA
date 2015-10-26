@@ -62,7 +62,7 @@ contenues dans une image. Pour cela, nous allons travailler avec ImageJ et deux 
 ce TP.
 
 \section{Manipulation luminance}
-\paragraph{}Nous allons dans un premier comparer deux images, l'une étant plus sombre que l'autre.
+\paragraph{}Nous allons dans un premier comparer deux images \textit{it1\_72pp} et \textit{it1\_72pp\_sombre}, la seconde étant plus sombre que l'autre.
 La clarté d'une image dépend de l'information de luminance.
 Pour effectuer cette comparaison, nous allons devoir utiliser un autre espace colorimètrique qui
 sait représenter cette information. Plusieurs espaces sont disponible comme le YUV ou le HSV.
@@ -87,5 +87,17 @@ représente le blanc, il est possible d'éclaircir l'image en rapprochant la val
 %TODO question 4 a voir
 
 \section{Rétablissement de la saturation}
+La saturation peut-être défini comme étant la chromaticité de la couleur. Elle est l'intensité de la couleur, plus
+la saturation est faible et plus la couleur paraît fade. Pour mettre en évidence cette saturation, nous analysons
+l'espace colorimètrique HSV des images \textit{it2\_72pp} et \textit{it2\_72\_gris}, dont la première est plus saturé
+que la seconde.\\
+
+%TODO mettre les images hsv de la saturation
+
+Sur ces images, l'information de saturation est représenté sur l'axe des x. On voit que sur l'image \textit{it2\_72\_gris} la
+valeur de la saturation reste à 0, ce qui fait que l'ensemble des pixels restent au centre du conne.
+
+\section{Transformation de la teinte}
+La teinte est la forme la plus pure d'une couleur. Ce qui signifie qu'elle ne peut pas représenté le blanc, le noire ou le gris.
 
 \end{document}
