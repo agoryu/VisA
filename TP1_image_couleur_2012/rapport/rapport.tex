@@ -16,6 +16,7 @@
 \usepackage{listings}
 
 \usepackage{csquotes}
+\usepackage{textcomp} 
 
 % code color
 \definecolor{ligthyellow}{RGB}{250,247,220}
@@ -142,8 +143,20 @@ Cela nous donne le résultat suivant :
  \begin{center}
  \includegraphics[width=4cm]{resultat/teinte1.png}
  \includegraphics[width=4cm]{resultat/teinte2.png}
- \caption{Graphique de l'espace colorimétrique HSB de l'images \textit{it3_72pp} et du résultat de la transformation}
+ \caption{Graphique de l'espace colorimétrique HSB de l'images \textit{it3\_72pp} et du résultat de la transformation}
  \end{center}
 \end{figure}
+
+\section{Analyse dans des espaces couleur adaptés}
+Les personnes souffrant de daltonisme ont des difficultées à voire les formes dans les images que nous analysons. 
+Voici dans un premier temps la représentation graphique des images \textit{it3\_72pp} et \textit{it3\_72\_sans\_5} :
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[width=4cm]{resultat/compare1_1.png}
+ \includegraphics[width=4cm]{resultat/compare1_2.png}
+ \caption{Graphique de l'espace colorimétrique HSB de l'images \textit{it3\_72pp} et \textit{it3\_72\_sans\_5}}
+ \end{center}
+\end{figure}
+
 
 \end{document}
