@@ -7,7 +7,6 @@ macro "augmentation_saturation" {
 
 // récupération du ID de l'image
 image = getImageID();
-title = getTitle();
 
 valeur = getNumber ("quelle augmentation (absolue) de saturation",valeur);
 
@@ -18,9 +17,7 @@ Dialog.create("Debut");
 Dialog.addMessage(" Cliquer sur OK pour commencer le traitement ");
 Dialog.show();
 
-
 setBatchMode(true);
-
 
 // récupération de la taille W x H du plan de fourier
 W = getWidth();
@@ -51,6 +48,5 @@ setBatchMode(false);
 Dialog.create("Fin");
 Dialog.addMessage(" Cliquer sur OK pour terminer le traitement");
 Dialog.show();
-
 
 }

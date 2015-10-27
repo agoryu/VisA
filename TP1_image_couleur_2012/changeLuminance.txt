@@ -17,10 +17,7 @@ Dialog.create("Debut");
 Dialog.addMessage(" Cliquer sur OK pour commencer le traitement ");
 Dialog.show();
 
-
 setBatchMode(true);
-
-
 
 // récupération de la taille W x H du plan de fourier
 W = getWidth();
@@ -28,7 +25,6 @@ H = getHeight();
 
 run("Duplicate...", "title=luminance augmentée");
 image_luminance_aug = getImageID();
-
 
 // 
 max_1 = 0; 
@@ -43,30 +39,21 @@ for (j=0; j<H; j++) {
 	R_avant = (couleur_avant & 0xff0000) >> 16;
 	G_avant = (couleur_avant & 0x00ff00) >> 8;
 	B_avant = (couleur_avant & 0x0000ff) ;
-	
+
 	R_apres = R_avant + valeur;
 	G_apres = G_avant + valeur;
 	B_apres = B_avant + valeur;
 
-
-
-
 	couleur_apres = ((R_apres & 0xff ) << 16) + ((G_apres & 0xff) << 8) + B_apres & 0xff;
-
 
 	selectImage (image_luminance_aug);
 	setPixel(i,j,couleur_apres);
-
-	
-
-      	}
-   }
+	}
+}
 
 setBatchMode(false);
 
 Dialog.create("Fin");
 Dialog.addMessage(" Cliquer sur OK pour terminer le traitement");
 Dialog.show();
-
-
 }
