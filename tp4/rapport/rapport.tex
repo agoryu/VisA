@@ -56,23 +56,23 @@
 \maketitle
 
 \section{Introduction}
-Lors de ce TP, nous avons étudié l'algorithme \textit{Iterative Closest Point}\footnote{ICP} qui est un algorithme de
-recalage de forme 3D. Ce type de procédé permet entre autre de comparer des modèles 3D ou encore pour des application 
-de réassemblage de surface.
+Lors de ce TP, nous avons étudié l'algorithme \textit{Iterative Closest Point}\footnote{ICP} qui est un algorithme de recalage de forme 3D. Ce type de procédé permet entre autre de comparer des modèles 3D ou encore pour des application de réassemblage de surface.
 
 \section{Principe}
-Le principe de l'algorithme est de minimiser la distance entre deux nuages de point. Pour cela l'algorithme a besoin
-des points bruts de deux balayage, une première estimation de la transformation et les critères d'arrêt de l'itération.
-L'algorithme fonctionne en quatre étapes.
+Le principe de l'algorithme est de minimiser la distance entre deux nuages de point. Pour cela l'algorithme a besoin des points bruts de deux balayage, une première estimation de la transformation et les critères d'arrêt de l'itération. L'algorithme fonctionne en quatre étapes.
 \begin{itemize}
- \item On associe les points grâce aux critère du plus proche voisin. Pour cela, il suffit de calculer la distance
- d'un point avec tous les autres points qui font parti sur nuage de point que nous voulons comparer.
+ \item On associe les points grâce aux critère du plus proche voisin. Pour cela, il suffit de calculer la distance euclidienne d'un point avec tous les autres points qui font parti du nuage de point que nous voulons comparer.
+ \item On estime la transformation des points grâce à une fonction d'erreur quadratique moyenne, permettant ainsi de trouver la meilleur transformation possible. Il faut donc trouver les matrices R (matrice de rotation) et T (matrice de translation) minimise : 
+ $\frac{1}{N_p}\sum_{i=1}^{N_p}||\vec{x_i} - R(\vec{q_R}) * \vec{p_i} - \vec{q_T}||^2$
+ Ici les éléments à déterminer sont $\vec{q_R}$ et $\vec{q_T}$.
+ \item On effectue la transformation qui à été déterminé dans l'étape précédente.
+ \item On ré-itere depuis l'étape 2.
+ 
 \end{itemize}
 
 
 \section{Théorème}
-Si (R,t) est la transformation optimale alors S={s_t} et T={t_c} ont le même centre de masse.
-\section{Réalisation}
+Si (R,t) est la transformation optimale alors S={$s_t$} et T={$t_c$} ont le même centre de masse.
 
 \section{Conclusion}
 \end{document}
