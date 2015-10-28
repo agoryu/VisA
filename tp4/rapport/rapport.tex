@@ -58,21 +58,60 @@
 \section{Introduction}
 Lors de ce TP, nous avons étudié l'algorithme \textit{Iterative Closest Point}\footnote{ICP} qui est un algorithme de recalage de forme 3D. Ce type de procédé permet entre autre de comparer des modèles 3D ou encore pour des application de réassemblage de surface.
 
-\section{Principe}
-Le principe de l'algorithme est de minimiser la distance entre deux nuages de point. Pour cela l'algorithme a besoin des points bruts de deux balayage, une première estimation de la transformation et les critères d'arrêt de l'itération. L'algorithme fonctionne en quatre étapes.
+\section{Donnée en entrée}
+L'algorithme ICP requiert deux données en entrée pour pouvoir comparer deux nuages de point :
 \begin{itemize}
- \item On associe les points grâce aux critère du plus proche voisin. Pour cela, il suffit de calculer la distance euclidienne d'un point avec tous les autres points qui font parti du nuage de point que nous voulons comparer.
- \item On estime la transformation des points grâce à une fonction d'erreur quadratique moyenne, permettant ainsi de trouver la meilleur transformation possible. Il faut donc trouver les matrices R (matrice de rotation) et T (matrice de translation) minimise : 
- $\frac{1}{N_p}\sum_{i=1}^{N_p}||\vec{x_i} - R(\vec{q_R}) * \vec{p_i} - \vec{q_T}||^2$
- Ici les éléments à déterminer sont $\vec{q_R}$ et $\vec{q_T}$.
- \item On effectue la transformation qui à été déterminé dans l'étape précédente.
- \item On ré-itere depuis l'étape 2.
- 
+\item Les deux nuages de point.
+\item La condition d'arrêt de l'itération.
 \end{itemize}
 
+\section{Principe}
+Le principe de l'algorithme est de minimiser la distance entre deux nuages de point. L'algorithme fonctionne en quatre étapes que nous allons présenter.
 
-\section{Théorème}
-Si (R,t) est la transformation optimale alors S={$s_t$} et T={$t_c$} ont le même centre de masse.
+\subsection{Association des points}
+On associe les points grâce aux critère du plus proche voisin. Pour cela, il suffit de calculer la distance euclidienne d'un point avec tous les autres points qui font parti du balayage que nous voulons comparer et de prendre la distance la plus petite.
+\begin{equation}
+d(\vec{p}, A) = min_{i\in{(1...N)}} d(\vec{p},\vec{a_i})
+\end{equation}
+Ici p est le point dont ont veut minimiser la distance et A est l'ensemble des points a tester.
+
+\subsection{Calcul de la meilleur transformation}
+On estime la transformation des points grâce à une fonction d'erreur quadratique moyenne, permettant ainsi de trouver la meilleur transformation possible. Il faut donc trouver les matrices R (matrice de rotation) et T (matrice de translation) afin de minimiser :
+
+\begin{equation} 
+ f(\vec{q} = \frac{1}{N_p}\sum_{i=1}^{N_p}||\vec{x_i} - R(\vec{q_R}) * \vec{p_i} - \vec{q_T}||^2
+\end{equation}
+
+Ici les éléments à déterminer sont $\vec{q_R}$ et $\vec{q_T}$. Nous pouvons calculer $\vec{q_T}$ avec la formule :
+
+\begin{equation} 
+ \vec{q_T} = \vec{\mu_x} - R(\vec{q_R})*\vec{\mu_p}
+\end{equation}
+
+Dans cette équation $\vec{\mu_x}$ et $\vec{\mu_p}$ sont les centres de masse des
+nuages de point que nous traitons. C'est grâce à ce calcul qu'il est possible de
+valider le théorème suivant : \\
+
+\fbox{
+\begin{minipage}{1\textwidth}
+     \begin{center}
+          Si (R,t) est la transformation optimale alors S={$s_t$} et T={$t_c$}\\ 
+			ont le même centre de masse.
+     \end{center}
+\end{minipage}
+}\\
+
+Et maintenant il faut calculer rotation $\vec{q_R}$ :
+\begin{equation} 
+ \vec{q_R} = UV^T
+\end{equation} 
+Ou U et V sont des matrices unitaire de taille 3x3.
+\subsection{Transformation et itération}
+ On effectue la transformation qui à été déterminé dans l'étape précédente.
+ Puis on ré-itere depuis l'étape 2 jusqu'à atteindre le critère de fin d'itération.
 
 \section{Conclusion}
+Nous avons donc vu comment fonctionne l'algorithme ICP. Cette algorithme a de nombreuse amélioration, notamment au niveau du calcul de la distance de la première étape de ICP.
+Cette algorithme est encore utilisé dans des technique actuel comme dans des méthodes
+de modélisation d'objet déformable non rigide.
 \end{document}
