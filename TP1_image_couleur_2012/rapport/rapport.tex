@@ -58,15 +58,13 @@
 
 \maketitle
 \section{Introduction}
-\paragraph{}Le but de ce TP est d'observer l'impacte de la luminance et de la saturation sur les informations
-contenues dans une image. Pour cela, nous allons travailler avec ImageJ et deux plug in fourni pour
-ce TP.
+\paragraph{}Le but de ce TP est d'observer l'impact de la luminance et de la saturation sur les informations contenues dans une image. Pour cela, nous allons travailler avec ImageJ et deux plug in fournis pour ce TP.
 
 \section{Manipulation luminance}
-\paragraph{}Nous allons dans un premier comparer deux images \textit{it1\_72pp} et \textit{it1\_72pp\_sombre}, la seconde étant plus sombre que l'autre.
+\paragraph{}Nous allons dans un premier temps comparer deux images \textit{it1\_72pp} et \textit{it1\_72pp\_sombre}, la seconde étant plus sombre que l'autre.
 La clarté d'une image dépend de l'information de luminance.
-Pour effectuer cette comparaison, nous allons devoir utiliser un autre espace colorimètrique qui
-sait représenter cette information. Plusieurs espaces sont disponible comme le YUV ou le HSV.
+Pour effectuer cette comparaison, nous allons devoir utiliser un autre espace colorimétrique qui
+sait représenter cette information. Plusieurs espaces sont disponibles comme le YUV ou le HSV.
 Dans notre cas, nous allons prendre l'espace HSV dont la valeur (\enquote{value}) représente 
 la luminance présente dans l'image.\\
 
@@ -78,13 +76,12 @@ la luminance présente dans l'image.\\
  \end{center}
 \end{figure}
 
-On voit clairement que la plus grande valeur de luminance de l'image sombre est bien inférieur
-à la valeur maximum de l'image plus claire. En effet, l'image qui est plus sombre ne possède pas de pixel dans le haut du conne
-HSV.\\
+On voit clairement que la plus grande valeur de luminance de l'image sombre est bien inférieure
+à la valeur maximum de l'image plus claire. En effet, l'image qui est plus sombre ne possède pas de pixel dans le haut du cône HSV.\\
 
 Nous allons maintenant essayer de transformer l'image la plus sombre en l'image originale. Pour cela,
 nous allons simplement ajouter une valeur identique dans les trois canaux RGB. Etant donné que la valeur 255
-représente le blanc, il est possible d'éclaircir l'image en rapprochant la valeur de chaque canaux de la valeur 255.
+représente le blanc, il est possible d'éclaircir l'image en rapprochant la valeur de chaque canal de la valeur 255.
 
 %TODO affichage des résultats de chaque image
 \begin{tabular}{|c|c|c|}
@@ -94,9 +91,9 @@ représente le blanc, il est possible d'éclaircir l'image en rapprochant la val
 %TODO question 4 a voir
 
 \section{Rétablissement de la saturation}
-La saturation peut-être défini comme étant la chromaticité de la couleur. Elle est l'intensité de la couleur, plus
+La saturation peut être définie comme étant la chromaticité de la couleur. Elle est l'intensité de la couleur, plus
 la saturation est importante et plus la couleur paraît fade. Pour mettre en évidence cette saturation, nous analysons
-l'espace colorimètrique HSV des images \textit{it2\_72pp} et \textit{it2\_72\_gris}, dont la première est plus saturé
+l'espace colorimétrique HSV des images \textit{it2\_72pp} et \textit{it2\_72\_gris}, dont la première est plus saturée
 que la seconde.\\
 
 \begin{figure}[!h]
@@ -107,11 +104,11 @@ que la seconde.\\
  \end{center}
 \end{figure}
 
-Sur ces images, l'information de saturation est représenté sur l'axe des x. On voit que sur l'image \textit{it2\_72\_gris} la
-valeur de la saturation reste à 0, ce qui fait que l'ensemble des pixels restent au centre du conne. On voit qu'il n'est pas
+Sur ces images, l'information de saturation est représentée sur l'axe des x. On voit que sur l'image \textit{it2\_72\_gris} la
+valeur de la saturation reste à 0, ce qui fait que l'ensemble des pixels restent au centre du cône. On voit qu'il n'est pas
 possible de transformer l'image \textit{it2\_72\_gris} en l'image \textit{it2\_72pp}, car l'information \textit{value} n'est pas
-connu et l'image ne changerai pas si on modifiait la saturation. C'est pourquoi nous utiliserons l'image \textit{it2\_72\_saturation\_faible}
-pour nos test sur le changement de la saturation. Voici dans un premier temps les graphiques des image dans le modèle HSB.
+connue et l'image ne changerait pas si on modifiait la saturation. C'est pourquoi nous utiliserons l'image \textit{it2\_72\_saturation\_faible}
+pour nos tests sur le changement de la saturation. Voici dans un premier temps les graphiques des images dans le modèle HSB.
 
 \begin{figure}[!h]
  \begin{center}
@@ -122,10 +119,10 @@ pour nos test sur le changement de la saturation. Voici dans un premier temps le
 \end{figure}
 \newpage
 
-On voit avec ces graphique que l'image \textit{it2\_72\_saturation\_faible} possède un \textit{value} différent de 0, donc si on 
-multiplie la saturation par une valeur défini il est possible de retrouver l'image \textit{it2\_72pp}. Cependant, on voit que 
-la saturation n'est pas la seul valeur qui différencie les deux images, la luminance est également très différente. En multipliant
-la saturation par 1,3 nous obtenons le résultats suivant :
+On voit avec ces graphiques que l'image \textit{it2\_72\_saturation\_faible} possède un \textit{value} différent de 0, donc si on 
+multiplie la saturation par une valeur définie, il est possible de retrouver l'image \textit{it2\_72pp}. Cependant, on voit que 
+la saturation n'est pas la seule valeur qui différencie les deux images, la luminance est également très différente. En multipliant
+la saturation par 1,3 nous obtenons le résultat suivant :
 
 \begin{figure}[!h]
  \begin{center}
@@ -135,52 +132,52 @@ la saturation par 1,3 nous obtenons le résultats suivant :
 \end{figure}
 
 \section{Transformation de la teinte}
-La teinte est la forme la plus pure d'une couleur. Ce qui signifie qu'elle ne peut pas représenté le blanc, le noire ou le gris.
+La teinte est la forme la plus pure d'une couleur. Ce qui signifie qu'elle ne peut pas représenter le blanc, le noir ou le gris.
 Pour modifier la couleur de l'image pour que le chiffre devienne vert, nous modifions la teinte en lui ajoutant la valeur 90.
-Nous avons pris la valeur 90, car on peut voir que sur le cercle de la teinte que le vert est a peu près a 90° de la couleur bleu.
+Nous avons pris la valeur 90, car on peut voir sur le cercle de la teinte que le vert est à peu près à 90° de la couleur bleue.
 Cela nous donne le résultat suivant : 
 \begin{figure}[!h]
  \begin{center}
  \includegraphics[width=4cm]{resultat/teinte1.png}
  \includegraphics[width=4cm]{resultat/teinte2.png}
- \caption{Graphique de l'espace colorimétrique HSB de l'images \textit{it3\_72pp} et du résultat de la transformation}
+ \caption{Graphique de l'espace colorimétrique HSB de l'image \textit{it3\_72pp} et du résultat de la transformation}
  \end{center}
 \end{figure}
 
 \section{Analyse dans des espaces couleur adaptés}
-Les personnes souffrant de daltonisme ont des difficultées à voire les formes dans les images que nous analysons. 
+Les personnes souffrant de daltonisme ont des difficultés à voir les formes dans les images que nous analysons. 
 Voici dans un premier temps la représentation graphique des images \textit{it3\_72pp} et \textit{it3\_72\_sans\_5} que nous
 allons analyser afin de comprendre les problèmes de ces personnes.
 \begin{figure}[!h]
  \begin{center}
  \includegraphics[width=4cm]{resultat/compare1_1.png}
  \includegraphics[width=4cm]{resultat/compare1_2.png}
- \caption{Graphique de l'espace colorimétrique HSB de l'images \textit{it3\_72pp} et \textit{it3\_72\_sans\_5}}
+ \caption{Graphique de l'espace colorimétrique HSB des images \textit{it3\_72pp} et \textit{it3\_72\_sans\_5}}
  \end{center}
 \end{figure}
 
-Sur ces images on peut considérer que l'image \textit{it3\_72pp} représente ce qui est visible par les personnes saine alors
-que l'image \textit{it3\_72\_sans\_5} représente ce qui est visible par les personnes atteintent de daltonisme.
-On peut voir sur ce premier résultat que certain type de daltonisme ne voit qu'un nombre infime de teinte. En effet, sur 
-l'ensemble des teintes présentent dans l'image, une seul est visible par une personne malade.
+Sur ces images on peut considérer que l'image \textit{it3\_72pp} représente ce qui est visible par les personnes saines alors
+que l'image \textit{it3\_72\_sans\_5} représente ce qui est visible par les personnes atteintes de daltonisme.
+On peut voir sur ce premier résultat que certains types de daltonisme ne voient qu'un nombre infime de teintes. En effet, sur 
+l'ensemble des teintes présentes dans l'image, une seule est visible par une personne malade.
 
 \begin{figure}[!h]
  \begin{center}
  \includegraphics[width=4cm]{resultat/compare2_1.png}
  \includegraphics[width=4cm]{resultat/compare2_2.png}
- \caption{Graphique de l'espace colorimétrique HSB de l'images \textit{it1\_72pp} et \textit{it1\_72\_sans\_cercle}}
+ \caption{Graphique de l'espace colorimétrique HSB des images \textit{it1\_72pp} et \textit{it1\_72\_sans\_cercle}}
  \end{center}
 \end{figure}
 
 \newpage
 
-Sur ce seconde exemple, on voit que ce type de daltonisme ne perçoit que les couleurs dont la luminance est proportionnel à 
+Sur ce second exemple, on voit que ce type de daltonisme ne perçoit que les couleurs dont la luminance est proportionnelle à 
 la saturation.
 
 \section{Conclusion}
-Nous avons pu voir, lors de ce TP, différent modèle colorimètrique permettant de visualiser les informations de luminance, de 
-teinte et de saturation. Malgrès que l'oeil humain soit composé de cônes pouvant percevoir de l'information dans le modèle
-colorimètrique RGB, nous avons vu que les informations HSB avaient un impacte important sur la vision de l'oeil humain.
+Nous avons pu voir, lors de ce TP, différents modèles colorimétriques permettant de visualiser les informations de luminance, de 
+teinte et de saturation. Bien que l'oeil humain soit composé de cônes pouvant percevoir de l'information dans le modèle
+colorimétrique RGB, nous avons vu que les informations HSB avaient un impact important sur la vision de l'oeil humain.
 
 \newpage
 
