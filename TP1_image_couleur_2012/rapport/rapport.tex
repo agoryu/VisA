@@ -15,7 +15,6 @@
 % pour inclure du code
 \usepackage{listings}
 
-\usepackage{csquotes}
 \usepackage{textcomp} 
 
 % code color
@@ -65,7 +64,7 @@
 La clarté d'une image dépend de l'information de luminance.
 Pour effectuer cette comparaison, nous allons devoir utiliser un autre espace colorimétrique qui
 sait représenter cette information. Plusieurs espaces sont disponibles comme le YUV ou le HSV.
-Dans notre cas, nous allons prendre l'espace HSV dont la valeur (\enquote{value}) représente 
+Dans notre cas, nous allons prendre l'espace HSV dont la valeur (\textit{value}) représente 
 la luminance présente dans l'image.\\
 
 \begin{figure}[!h]
@@ -83,10 +82,19 @@ Nous allons maintenant essayer de transformer l'image la plus sombre en l'image 
 nous allons simplement ajouter une valeur identique dans les trois canaux RGB. Etant donné que la valeur 255
 représente le blanc, il est possible d'éclaircir l'image en rapprochant la valeur de chaque canal de la valeur 255.
 
-%TODO affichage des résultats de chaque image
-\begin{tabular}{|c|c|c|}
- 
-\end{tabular}
+\begin{figure}[!h]
+	\begin{center}
+	\begin{tabular}{|c|c|c|}
+ 		\hline
+ 		it1\_72pp & it2\_72pp & it3\_72pp\\
+ 		\hline
+ 		30 & 40 & 60\\
+ 		\hline
+	\end{tabular}
+	\caption{Valeur ajouté à l'image sombre pour obtenir l'image d'origine}
+	\end{center}
+\end{figure}
+
 
 %TODO question 4 a voir
 
@@ -183,14 +191,9 @@ colorimétrique RGB, nous avons vu que les informations HSB avaient un impact im
 
 \section{Annexes}
 \begin{lstlisting}[caption=Macros de modification de la luminance d'une image]
-// Une macro-squelette pour la couleur.
-// Version: 0.1
-// Date: 14/09/2011
-// Author: L. Macaire
- 
 macro "augmentation_luminance" {
 
-// récupération du ID de l'image
+// recuperation du ID de l'image
 image = getImageID();
 
 valeur = getNumber ("quelle augmentation (absolue) de luminance",valeur);
@@ -204,11 +207,11 @@ Dialog.show();
 
 setBatchMode(true);
 
-// récupération de la taille W x H du plan de fourier
+// recuperation de la taille W x H du plan de fourier
 W = getWidth();
 H = getHeight();
 
-run("Duplicate...", "title=luminance augmentée");
+run("Duplicate...", "title=luminance augmentee");
 image_luminance_aug = getImageID();
 
 // 
@@ -245,14 +248,9 @@ Dialog.show();
 \end{lstlisting}
 
 \begin{lstlisting}[caption=Macros de modification de la saturation d'une image]
-// Une macro-squelette pour la couleur.
-// Version: 0.1
-// Date: 14/09/2011
-// Author: L. Macaire
- 
 macro "augmentation_saturation" {
 
-// récupération du ID de l'image
+// recuperation du ID de l'image
 image = getImageID();
 
 valeur = getNumber ("quelle augmentation (absolue) de saturation",valeur);
@@ -266,7 +264,7 @@ Dialog.show();
 
 setBatchMode(true);
 
-// récupération de la taille W x H du plan de fourier
+// recuperation de la taille W x H du plan de fourier
 W = getWidth();
 H = getHeight();
 
@@ -296,6 +294,52 @@ Dialog.create("Fin");
 Dialog.addMessage(" Cliquer sur OK pour terminer le traitement");
 Dialog.show();
 
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Macros de modification de la teinte d'une image]
+macro "augmentation_teinte" {
+
+// recuperation du ID de l'image
+image = getImageID();
+
+Dialog.create("Debut");
+Dialog.addMessage(" Cliquer sur OK pour commencer le traitement ");
+Dialog.show();
+
+
+setBatchMode(true);
+
+
+// recuperation de la taille W x H du plan de fourier
+W = getWidth();
+H = getHeight();
+
+//dusplication de l'image
+run("Duplicate...", "title=saturation");
+image_saturation_aug = getImageID();
+
+//changement d'espace colorimetrique
+run("Color Space Converter", "from=RGB to=HSB white=D65");
+
+//split des canaux
+run("Split Channels");
+
+//traitement sur les image
+selectWindow("saturation (HSB) (red)");
+run("Add...", "value="+90);
+
+//merge des canaux
+run("Merge Channels...", "red=[saturation (HSB) (red)] green=[saturation (HSB) (green)] blue=[saturation (HSB) (blue)] gray=*None* keep ignore");
+
+//changement d'espace colorimetrique
+run("Color Space Converter", "from=HSB to=RGB white=D65");
+
+setBatchMode(false);
+
+Dialog.create("Fin");
+Dialog.addMessage(" Cliquer sur OK pour terminer le traitement");
+Dialog.show();
 }
 \end{lstlisting}
 
