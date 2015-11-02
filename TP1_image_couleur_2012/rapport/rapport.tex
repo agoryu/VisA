@@ -95,8 +95,16 @@ représente le blanc, il est possible d'éclaircir l'image en rapprochant la val
 	\end{center}
 \end{figure}
 
+Lorsque nous effectuons la différence entre l'image original et l'image transformé, nous observons le résultat suivant :
 
-%TODO question 4 a voir
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[width=4cm]{resultat/difference_luminance.png}
+ \caption{Résultat de la différence entre l'image original et l'image modifié}
+ \end{center}
+\end{figure}
+
+Nous pouvons voir qu'il y a une différence sur les points vert foncé et jaune qui sont bleu sur la différence. Lorsque nous regardons la valeur de chaque canal pour ces points, on voit que les canaux rouge et vert ont la meme valeur alors que le bleu est casiment null. Cela nous permet de faire ressortir le défaut de cette méthode qui est que la luminance n'utilise pas les meme coefficiant pour chaque canaux. C'est pourquoi il exite des espaces colorimétrique particulier pour cette valeur. 
 
 \section{Rétablissement de la saturation}
 La saturation peut être définie comme étant la chromaticité de la couleur. Elle est l'intensité de la couleur, plus
@@ -176,8 +184,6 @@ l'ensemble des teintes présentes dans l'image, une seule est visible par une pe
  \caption{Graphique de l'espace colorimétrique HSB des images \textit{it1\_72pp} et \textit{it1\_72\_sans\_cercle}}
  \end{center}
 \end{figure}
-
-\newpage
 
 Sur ce second exemple, on voit que ce type de daltonisme ne perçoit que les couleurs dont la luminance est proportionnelle à 
 la saturation.
