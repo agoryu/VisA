@@ -92,6 +92,7 @@ macro "otsu" {
 
 				if (omega1 * omega2 * omega3 != 0) {
 
+					  //calcul du centre de gravité de chaque classe
 						mu1 = somme1 / omega1;
 						mu2 = somme2 / omega2;
 						mu3 = somme3 / omega3;
