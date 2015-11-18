@@ -56,27 +56,27 @@
 \maketitle
 
 \section{Introduction}
-Lors de ce TP, nous avons étudié l'algorithme \textit{Iterative Closest Point}\footnote{ICP} qui est un algorithme de recalage de forme 3D. Ce type de procédé permet entre autre de comparer des modèles 3D ou encore pour des application de réassemblage de surface.
+Lors de ce TP, nous avons étudié l'algorithme \textit{Iterative Closest Point}\footnote{ICP} qui est un algorithme de recalage de forme 3D. Ce type de procédé permet entre autre de comparer des modèles 3D ou est encore utilisé pour des applications de réassemblage de surface.
 
 \section{Donnée en entrée}
-L'algorithme ICP requiert deux données en entrée pour pouvoir comparer deux nuages de point :
+L'algorithme ICP requiert deux données en entrée pour pouvoir comparer deux nuages de points :
 \begin{itemize}
-\item Les deux nuages de point.
+\item Les deux nuages de points.
 \item La condition d'arrêt de l'itération.
 \end{itemize}
 
 \section{Principe}
-Le principe de l'algorithme est de minimiser la distance entre deux nuages de point. L'algorithme fonctionne en quatre étapes que nous allons présenter.
+Le principe de l'algorithme est de minimiser la distance entre deux nuages de points. L'algorithme fonctionne en quatre étapes que nous allons présenter.
 
 \subsection{Association des points}
-On associe les points grâce aux critère du plus proche voisin. Pour cela, il suffit de calculer la distance euclidienne d'un point avec tous les autres points qui font parti du balayage que nous voulons comparer et de prendre la distance la plus petite.
+On associe les points grâce aux critères du plus proche voisin. Pour cela, il suffit de calculer la distance euclidienne d'un point avec tous les autres points qui font parti du balayage que nous voulons comparer et de prendre la distance la plus petite.
 \begin{equation}
 d(\vec{p}, A) = min_{i\in{(1...N)}} d(\vec{p},\vec{a_i})
 \end{equation}
-Ici p est le point dont ont veut minimiser la distance et A est l'ensemble des points a tester.
+Ici p est le point dont on veut minimiser la distance et A est l'ensemble des points à tester.
 
-\subsection{Calcul de la meilleur transformation}
-On estime la transformation des points grâce à une fonction d'erreur quadratique moyenne, permettant ainsi de trouver la meilleur transformation possible. Il faut donc trouver les matrices R (matrice de rotation) et T (matrice de translation) afin de minimiser :
+\subsection{Calcul de la meilleure transformation}
+On estime la transformation des points grâce à une fonction d'erreur quadratique moyenne, permettant ainsi de trouver la meilleure transformation possible. Il faut donc trouver les matrices R (matrice de rotation) et T (matrice de translation) afin de minimiser :
 
 \begin{equation} 
  f(\vec{q} = \frac{1}{N_p}\sum_{i=1}^{N_p}||\vec{x_i} - R(\vec{q_R}) * \vec{p_i} - \vec{q_T}||^2
@@ -89,7 +89,7 @@ Ici les éléments à déterminer sont $\vec{q_R}$ et $\vec{q_T}$. Nous pouvons 
 \end{equation}
 
 Dans cette équation $\vec{\mu_x}$ et $\vec{\mu_p}$ sont les centres de masse des
-nuages de point que nous traitons. C'est grâce à ce calcul qu'il est possible de
+nuages de points que nous traitons. C'est grâce à ce calcul qu'il est possible de
 valider le théorème suivant : \\
 
 \fbox{
@@ -101,17 +101,17 @@ valider le théorème suivant : \\
 \end{minipage}
 }\\
 
-Et maintenant il faut calculer rotation $\vec{q_R}$ :
+Et maintenant il faut calculer la rotation $\vec{q_R}$ :
 \begin{equation} 
  \vec{q_R} = UV^T
 \end{equation} 
-Ou U et V sont des matrices unitaire de taille 3x3.
+Ou U et V sont des matrices unitaires de taille 3x3.
 \subsection{Transformation et itération}
- On effectue la transformation qui à été déterminé dans l'étape précédente.
- Puis on ré-itere depuis l'étape 2 jusqu'à atteindre le critère de fin d'itération.
+ On effectue la transformation qui a été déterminée dans l'étape précédente.
+ Puis on réitere depuis l'étape 2 jusqu'à atteindre le critère de fin d'itération.
 
 \section{Conclusion}
-Nous avons donc vu comment fonctionne l'algorithme ICP. Cette algorithme a de nombreuse amélioration, notamment au niveau du calcul de la distance de la première étape de ICP.
-Cette algorithme est encore utilisé dans des technique actuel comme dans des méthodes
+Nous avons donc vu comment fonctionne l'algorithme ICP. Cet algorithme a de nombreuses améliorations, notamment au niveau du calcul de la distance de la première étape de ICP.
+Cet algorithme est encore utilisé dans des techniques actuelles comme dans des méthodes
 de modélisation d'objet déformable non rigide.
 \end{document}
