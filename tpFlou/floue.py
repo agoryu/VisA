@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+#Calcul des fonction basse, moyenne et eleve
 def CalcTempB(i):
     if(i < 10):
         return 1
@@ -26,6 +27,7 @@ def CalcTempE(i):
     else:
         return 1
 
+#Calcul des operateurs de la logique flou
 def Opmin(tab1, tab2):
     size = range(0, len(tab1))
     result = []
@@ -54,14 +56,13 @@ for i in temp:
     temperatureM.append(CalcTempM(i))
     temperatureE.append(CalcTempE(i))
 
-
+#Exo 1
+"""
 print("degre d'appartenance pour la temperature 16 :")
 print("basse = " + repr(temperatureB[16]))
 print("moyen = " + repr(temperatureM[16]))
 print("eleve = " + repr(temperatureE[16]))
 
-#Exo 1
-"""
 plt.title("Partition floue")
 plt.plot(temp, temperatureB)
 plt.plot(temp, temperatureM)
