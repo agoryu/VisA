@@ -57,7 +57,7 @@ for i in temp:
     temperatureE.append(CalcTempE(i))
 
 #Exo 1
-"""
+
 print("degre d'appartenance pour la temperature 16 :")
 print("basse = " + repr(temperatureB[16]))
 print("moyen = " + repr(temperatureM[16]))
@@ -69,7 +69,7 @@ plt.plot(temp, temperatureM)
 plt.plot(temp, temperatureE)
 plt.xlabel('Temperature')
 plt.show()
-"""
+
 
 #Exo 2
 """

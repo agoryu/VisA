@@ -1,8 +1,4 @@
-// Une macro-squelette calculer OTSU.
-// Version: 0.1
-// Date: sept 2015
-// Author: L. Macaire
- // par calcul de chaque intravalle
+
 macro "otsu" {
 
 	image = getImageID();
@@ -127,6 +123,8 @@ macro "otsu" {
 
 						intra = omega1*sigma1 + omega2*sigma2 + omega3*sigma3;
 
+						//recherche des deux plus petites valeur intra classe
+						//pour segmenter les données
 						if(min_val > intra) {
 							t1_min = k;
 							t2_min = k2;
