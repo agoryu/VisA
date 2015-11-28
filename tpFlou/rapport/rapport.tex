@@ -3,14 +3,145 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage[francais]{babel}
+\usepackage{graphicx}
+\usepackage{listings}
 
-\title{}
-\author{}
+% pour definir des couleurs
+\usepackage{xcolor}
+
+%couleur
+\usepackage{color}
+\usepackage{multicol}
+
+% code color
+\definecolor{ligthyellow}{RGB}{250,247,220}
+\definecolor{darkblue}{RGB}{5,10,85}
+\definecolor{ligthblue}{RGB}{1,147,128}
+\definecolor{darkgreen}{RGB}{8,120,51}
+\definecolor{darkred}{RGB}{160,0,0}
+
+\lstset{
+    language=Python,
+    captionpos=b,
+    extendedchars=true,
+    frame=lines,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    keepspaces=true,
+    breaklines=true,
+    showspaces=false,
+    showstringspaces=false,
+    breakatwhitespace=false,
+    stepnumber=1,
+    showtabs=false,
+    tabsize=3,
+    basicstyle=\small\ttfamily,
+    backgroundcolor=\color{ligthyellow},
+    keywordstyle=\color{ligthblue},
+    morekeywords={include, printf, uchar},
+    identifierstyle=\color{darkblue},
+    commentstyle=\color{darkgreen},
+    stringstyle=\color{darkred},
+}
+
+\title{Approche de la logique floue}
+\author{Elliot Vanegue}
 
 \begin{document}
 
 \maketitle
 
 \section{Introduction}
+Lors de ce TP, nous allons nous familiariser avec les concepts principaux de la logique floue.
+La logique floue repose sur un système de proposition dont la valeur est dans l'intervalle [0,1] contrairement aux logique
+modales qui reposent sur un système binaire. 
 
+\section{Fonction d'appartenance}
+Dans un premier temps, nous programmons trois ensembles flous représentant des intervalles de température.
+Pour cela nous définissons une fonction par intervalle afin de définir sa courbe. Dans ces fonctions, nous 
+distinguons trois cas possible :
+\begin{itemize}
+  \item Un intervalle où l'ensemble est vrai (ordonnée = 1)
+  \item Un intervalle où l'ensemble est faux (ordonnée = 0)
+  \item Un intervalle où l'ensemble a un degré de liberté entre 0 et 1
+\end{itemize}
+Nous obtenons ainsi le graphique de la Fig. \ref{fig:GraphiqueFlou} 
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=6cm]{tempFlou.png}
+    \caption{Graphique de la partition floue de l'exemple \og Température \fg}
+    \label{fig:GraphiqueFlou}
+  \end{center}
+\end{figure}
+
+\begin{figure}
+  \begin{lstlisting}[caption=Fonction de l'ensemble température basse]
+    def CalcTempB(i):
+      if(i < 10):
+          return 1.0
+      elif(i<20):
+          return 1.0 - ((1.0/10.0) * (i-10.0))
+      else:
+          return 0.0
+  \end{lstlisting}
+\end{figure}
+
+Cela nous permet ainsi de déterminer les degrés d'appartenance de la température $16\deg$ pour chaque sous 
+ensemble (voir Tab. \ref{tab:temp16}).
+\begin{table}[!h]
+  \label{tab:temp16}
+
+  \begin{center}
+    \begin{tabular}{|c|c|c|}
+      \hline
+       classe & degré d'appartenance\\
+       \hline
+       basse & 0.4\\
+       moyenne & 0.6\\
+       élevé & 0.0\\
+    \end{tabular}
+    \caption{Résultat du degré d'appartenance de la température 16 dans chaque ensemble}
+  \end{center}
+\end{table}
+
+\section{Opérateurs de la logique floue}
+Il est possible de définir des opérateurs permettant de récupérer en sorti les valeurs maximum ou 
+minimum de deux ensembles. Pour cela nous créons les fonctions suivantes :
+\begin{figure}[!h]
+  \begin{lstlisting}[caption=Opérateur min]
+   def Opmin(tab1, tab2):
+    size = min(len(tab1), len(tab2))
+    size = range(0, size)
+    result = []
+    for i in size:
+        step = [tab1[i], tab2[i]]
+        result.append(min(step))
+
+    return result
+  \end{lstlisting}
+\end{figure}
+
+\begin{figure}[!h]
+  \begin{lstlisting}[caption=Opérateur max]
+   def Opmax(tab1, tab2):
+    size = min(len(tab1), len(tab2))
+    size = range(0, size)
+    result = []
+    for i in size:
+        step = [tab1[i], tab2[i]]
+        result.append(max(step))
+
+    return result
+  \end{lstlisting}
+\end{figure}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=7cm]{operateurFlou.png}
+    \caption{Graphique des fonction min et max de la logique floue}
+    \label{fig:operateur}
+  \end{center}
+\end{figure}
 \end{document}

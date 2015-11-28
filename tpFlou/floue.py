@@ -3,29 +3,29 @@ import matplotlib.pyplot as plt
 #Calcul des fonction basse, moyenne et eleve
 def CalcTempB(i):
     if(i < 10):
-        return 1
+        return 1.0
     elif(i<20):
-        return 1 - ((1/10) * (i-10))
+        return 1.0 - ((1.0/10.0) * (i-10.0))
     else:
-        return 0
+        return 0.0
 
 def CalcTempM(i):
     if(i < 10):
-        return 0
+        return 0.0
     elif(i<20):
-        return ((1/10) * (i-10))
+        return ((1.0/10.0) * (i-10.0))
     elif(i<30):
-        return 1 - ((1/10) * (i-20))
+        return 1.0 - ((1.0/10.0) * (i-20.0))
     else:
-        return 0
+        return 0.0
 
 def CalcTempE(i):
     if(i < 20):
-        return 0
+        return 0.0
     elif(i<30):
-        return ((1/10) * (i-20))
+        return ((1.0/10.0) * (i-20.0))
     else:
-        return 1
+        return 1.0
 
 #Calcul des operateurs de la logique flou
 def Opmin(tab1, tab2):
@@ -40,7 +40,7 @@ def Opmin(tab1, tab2):
 
 def Opmax(tab1, tab2):
     size = min(len(tab1), len(tab2))
-    size = range(0, size) 
+    size = range(0, size)
     result = []
     for i in size:
         step = [tab1[i], tab2[i]]
@@ -73,40 +73,41 @@ for i in puissanceChauf:
     chauffe.append(Chauf(i))
 
 #Exo 1
-"""
+
 print("degre d'appartenance pour la temperature 16 :")
 print("basse = " + repr(temperatureB[16]))
 print("moyen = " + repr(temperatureM[16]))
 print("eleve = " + repr(temperatureE[16]))
 
-plt.title("Partition floue")
+plt.title("Partition floue de la temperature")
 plt.plot(temp, temperatureB)
 plt.plot(temp, temperatureM)
 plt.plot(temp, temperatureE)
 plt.xlabel('Temperature')
 plt.show()
-"""
+
 
 #Exo 2
-"""
+
 minTemp = Opmin(temperatureB, temperatureM)
 maxTemp = Opmax(temperatureM, temperatureE)
 
-plt.title("Partition floue")
+plt.title("Operateur de la logique floue")
 plt.plot(temp, minTemp)
 plt.plot(temp, maxTemp)
 plt.xlabel('Temperature')
 plt.show()
-"""
+
 
 #Chauffage
-"""
+
 plt.title("Chauffage")
 plt.plot(puissanceChauf, chauffe)
 plt.show()
-"""
+
 
 #Exo 3
+
 plt.title("Implication de Mamdani")
 plt.plot(puissanceChauf, Opmin(temperatureB, puissanceChauf))
 plt.show()
