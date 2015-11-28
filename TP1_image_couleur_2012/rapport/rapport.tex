@@ -57,7 +57,9 @@
 
 \maketitle
 \section{Introduction}
-\paragraph{}Le but de ce TP est d'observer l'impact de la luminance et de la saturation sur les informations contenues dans une image. Pour cela, nous allons travailler avec ImageJ et deux plug in fournis pour ce TP.
+\paragraph{}Le but de ce TP est d'observer l'impact de la luminance et de la saturation sur les informations contenues dans une image. Pour cela, nous allons travailler avec ImageJ et deux plug in fournis pour ce TP. L'ensemble de nos tests se feront sur des images
+utilisées dans un test pour dépister le daltonisme. Le daltonisme est une maladie qui a pour conséquence de perturber la vision
+des personnes à cause d'une mauvaise visualisation des couleurs.
 
 \section{Manipulation luminance}
 \paragraph{}Nous allons dans un premier temps comparer deux images \textit{it1\_72pp} et \textit{it1\_72pp\_sombre}, la seconde étant plus sombre que l'autre.
@@ -65,7 +67,8 @@ La clarté d'une image dépend de l'information de luminance.
 Pour effectuer cette comparaison, nous allons devoir utiliser un autre espace colorimétrique qui
 sait représenter cette information. Plusieurs espaces sont disponibles comme le YUV ou le HSV.
 Dans notre cas, nous allons prendre l'espace HSV dont la valeur (\textit{value}) représente 
-la luminance présente dans l'image.\\
+la luminance présente dans l'image, sachant que d'autre espace colorimètrique était possible comme le YUV dont le 
+\textit{Y} représente la luminance également.\\
 
 \begin{figure}[!h]
  \begin{center}
@@ -104,7 +107,7 @@ Lorsque nous effectuons la différence entre l'image originale et l'image transf
  \end{center}
 \end{figure}
 
-Nous pouvons voir qu'il y a une différence sur les points verts foncés et les jaunes, car ceux-ci sont bleu sur la différence. Lorsque nous regardons la valeur de chaque canal pour ces points, on voit que les canaux rouge et vert ont la même valeur, tandis que le bleu est casiment null. Cela nous permet de faire ressortir le défaut de cette méthode qui est que la luminance n'utilise pas les mêmes coéfficiants pour chaque canaux. C'est pourquoi il exite des espaces colorimétriques particulier pour cette valeur. 
+Nous pouvons voir qu'il y a une différence sur les points verts foncés et les jaunes, car ceux-ci sont bleu sur l'image représentant la différence. Lorsque nous regardons la valeur de chaque canal pour ces points, on voit que les canaux rouge et vert ont la même valeur, tandis que le bleu est casiment null. Cela nous permet de faire ressortir le défaut de cette méthode qui est que la luminance n'utilise pas les mêmes coéfficiants pour chaque canaux. C'est pourquoi il exite des espaces colorimétriques adapté pour cette valeur. 
 
 \section{Rétablissement de la saturation}
 La saturation peut être définie comme étant la chromaticité de la couleur. Elle est l'intensité de la couleur, plus

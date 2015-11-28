@@ -29,7 +29,8 @@ def CalcTempE(i):
 
 #Calcul des operateurs de la logique flou
 def Opmin(tab1, tab2):
-    size = range(0, len(tab1))
+    size = min(len(tab1), len(tab2))
+    size = range(0, size)
     result = []
     for i in size:
         step = [tab1[i], tab2[i]]
@@ -38,7 +39,8 @@ def Opmin(tab1, tab2):
     return result
 
 def Opmax(tab1, tab2):
-    size = range(0, len(tab1))
+    size = min(len(tab1), len(tab2))
+    size = range(0, size) 
     result = []
     for i in size:
         step = [tab1[i], tab2[i]]
@@ -46,18 +48,32 @@ def Opmax(tab1, tab2):
 
     return result
 
+def Chauf(i):
+    if (i<8):
+        return 0
+    elif (i<10):
+        return i*(1/2)
+    else:
+        return 1
+
+#calcul de la courbe
 temp = range(0, 40)
+puissanceChauf = range(0,15)
 temperatureB = []
 temperatureM = []
 temperatureE = []
+chauffe = []
 
 for i in temp:
     temperatureB.append(CalcTempB(i))
     temperatureM.append(CalcTempM(i))
     temperatureE.append(CalcTempE(i))
 
-#Exo 1
+for i in puissanceChauf:
+    chauffe.append(Chauf(i))
 
+#Exo 1
+"""
 print("degre d'appartenance pour la temperature 16 :")
 print("basse = " + repr(temperatureB[16]))
 print("moyen = " + repr(temperatureM[16]))
@@ -69,7 +85,7 @@ plt.plot(temp, temperatureM)
 plt.plot(temp, temperatureE)
 plt.xlabel('Temperature')
 plt.show()
-
+"""
 
 #Exo 2
 """
@@ -82,3 +98,15 @@ plt.plot(temp, maxTemp)
 plt.xlabel('Temperature')
 plt.show()
 """
+
+#Chauffage
+"""
+plt.title("Chauffage")
+plt.plot(puissanceChauf, chauffe)
+plt.show()
+"""
+
+#Exo 3
+plt.title("Implication de Mamdani")
+plt.plot(puissanceChauf, Opmin(temperatureB, puissanceChauf))
+plt.show()
