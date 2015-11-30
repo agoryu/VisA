@@ -54,17 +54,16 @@
 
 \section{Introduction}
 Lors de ce TP, nous allons nous familiariser avec les concepts principaux de la logique floue.
-La logique floue repose sur un système de proposition dont la valeur est dans l'intervalle [0,1] contrairement aux logique
-modales qui reposent sur un système binaire. 
+La logique floue repose sur un système de propositions dont la valeur est dans l'intervalle [0,1] contrairement aux logiques modales qui reposent sur un système binaire. 
 
 \section{Fonction d'appartenance}
 Dans un premier temps, nous programmons trois ensembles flous représentant des intervalles de température.
 Pour cela nous définissons une fonction par intervalle afin de définir sa courbe. Dans ces fonctions, nous 
-distinguons trois cas possible :
+distinguons trois cas possibles :
 \begin{itemize}
   \item Un intervalle où l'ensemble est vrai (ordonnée = 1)
   \item Un intervalle où l'ensemble est faux (ordonnée = 0)
-  \item Un intervalle où l'ensemble a un degré de liberté entre 0 et 1
+  \item Un intervalle où l'ensemble a un degré d'incertitude entre 0 et 1
 \end{itemize}
 Nous obtenons ainsi le graphique de la Fig. \ref{fig:GraphiqueFlou} 
 
@@ -104,7 +103,7 @@ ensemble (voir Tab. \ref{tab:temp16}).
 \end{table}
 
 \section{Opérateurs de la logique floue}
-Il est possible de définir des opérateurs permettant de récupérer en sorti les valeurs maximum ou 
+Il est possible de définir des opérateurs permettant de récupérer en sortie les valeurs maximum ou 
 minimum de deux ensembles. Pour cela nous créons les fonctions suivantes :
 \begin{lstlisting}[caption=Opérateur min]
  def Opmin(tab1, tab2):
@@ -129,20 +128,21 @@ minimum de deux ensembles. Pour cela nous créons les fonctions suivantes :
 \begin{figure}[!h]
   \begin{center}
     \includegraphics[width=9cm]{operateurFlou.png}
-    \caption{Graphique des fonction min et max de la logique floue}
+    \caption{Graphique des fonctions min et max de la logique floue}
     \label{fig:operateur}
   \end{center}
 \end{figure}
 
-Dans la Fig. \ref{fig:operateur}, la courbe bleu représente la fonction min entre les sous-ensemble
-température moyenne et température élevé et la courbe verte représente la fonction max pour les mêmes
-sous-ensemble que la courbe bleu.
+Dans la Fig. \ref{fig:operateur}, la courbe bleue représente la fonction min entre les sous-ensembles
+température moyenne et température élevée, et la courbe verte représente la fonction max pour les mêmes
+sous-ensembles que la courbe bleue.
 
 \section{Implication floue}
 A partir de la règle \og si température basse alors chauffer fort \fg , nous utilisons l'implication
 de Mamdani pour construire la sortie \og puissance de chauffe \fg . L'implication de Mamdani dit que l'ensemble
-floue de sorti correspond à la fonction minimum de la logique floue pour les sous-ensemble pris en compte. En appliquant
-ce principe nous optenons le sous-ensemble de la Fig. \ref{fig:mamdani}.
+flou de sortie correspond au minimum entre une fonction et la valeur recherchée. En appliquant
+ce principe nous obtenons le sous-ensemble de la Fig. \ref{fig:mamdani} où la valeur maximum est 0.8, car 0.8 est la valeur 
+d'incertitude de la température 12\degre.
 
 \begin{figure}[!h]
   \begin{center}

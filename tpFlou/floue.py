@@ -57,6 +57,12 @@ def Chauf(i):
     else:
         return 1
 
+def ChaufTemp(tab, mini):
+    result = []
+    for i in tab:
+        result.append(min(i, mini))
+    return result
+
 #calcul de la courbe
 temp = range(0, 40)
 puissanceChauf = range(0,15)
@@ -117,8 +123,9 @@ plt.show()
 
 #Exo 3
 
+result = ChaufTemp(chauffe, 0.8)
 plt.title("Implication de Mamdani")
-plt.plot(puissanceChauf, Opmin(temperatureB, puissanceChauf))
+plt.plot(range(0, len(result)), result)
 plt.xlabel('Puissance chauffage')
 plt.axis([0, 15, -0.1, 1.1])
 plt.show()
