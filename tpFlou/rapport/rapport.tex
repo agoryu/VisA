@@ -70,29 +70,26 @@ Nous obtenons ainsi le graphique de la Fig. \ref{fig:GraphiqueFlou}
 
 \begin{figure}[!h]
   \begin{center}
-    \includegraphics[width=6cm]{tempFlou.png}
+    \includegraphics[width=9cm]{tempFlou.png}
     \caption{Graphique de la partition floue de l'exemple \og Température \fg}
     \label{fig:GraphiqueFlou}
   \end{center}
 \end{figure}
 
-\begin{figure}
-  \begin{lstlisting}[caption=Fonction de l'ensemble température basse]
-    def CalcTempB(i):
-      if(i < 10):
-          return 1.0
-      elif(i<20):
-          return 1.0 - ((1.0/10.0) * (i-10.0))
-      else:
-          return 0.0
-  \end{lstlisting}
-\end{figure}
+\begin{lstlisting}[caption=Fonction de l'ensemble température basse]
+  def CalcTempB(i):
+    if(i < 10):
+        return 1.0
+    elif(i<20):
+        return 1.0 - ((1.0/10.0) * (i-10.0))
+    else:
+        return 0.0
+\end{lstlisting}
 
 Cela nous permet ainsi de déterminer les degrés d'appartenance de la température $16\deg$ pour chaque sous 
 ensemble (voir Tab. \ref{tab:temp16}).
 \begin{table}[!h]
   \label{tab:temp16}
-
   \begin{center}
     \begin{tabular}{|c|c|c|}
       \hline
@@ -109,39 +106,53 @@ ensemble (voir Tab. \ref{tab:temp16}).
 \section{Opérateurs de la logique floue}
 Il est possible de définir des opérateurs permettant de récupérer en sorti les valeurs maximum ou 
 minimum de deux ensembles. Pour cela nous créons les fonctions suivantes :
-\begin{figure}[!h]
-  \begin{lstlisting}[caption=Opérateur min]
-   def Opmin(tab1, tab2):
-    size = min(len(tab1), len(tab2))
-    size = range(0, size)
-    result = []
-    for i in size:
-        step = [tab1[i], tab2[i]]
-        result.append(min(step))
+\begin{lstlisting}[caption=Opérateur min]
+ def Opmin(tab1, tab2):
+  size = range(0, min(len(tab1), len(tab2)))
+  result = []
+  for i in size:
+      step = [tab1[i], tab2[i]]
+      result.append(min(step))
+  return result
+\end{lstlisting}
 
-    return result
-  \end{lstlisting}
-\end{figure}
-
-\begin{figure}[!h]
-  \begin{lstlisting}[caption=Opérateur max]
-   def Opmax(tab1, tab2):
-    size = min(len(tab1), len(tab2))
-    size = range(0, size)
-    result = []
-    for i in size:
-        step = [tab1[i], tab2[i]]
-        result.append(max(step))
-
-    return result
-  \end{lstlisting}
-\end{figure}
+\begin{lstlisting}[caption=Opérateur max]
+ def Opmax(tab1, tab2):
+  size = range(0, min(len(tab1), len(tab2)))
+  result = []
+  for i in size:
+      step = [tab1[i], tab2[i]]
+      result.append(max(step))
+  return result
+\end{lstlisting}
 
 \begin{figure}[!h]
   \begin{center}
-    \includegraphics[width=7cm]{operateurFlou.png}
+    \includegraphics[width=9cm]{operateurFlou.png}
     \caption{Graphique des fonction min et max de la logique floue}
     \label{fig:operateur}
   \end{center}
 \end{figure}
+
+Dans la Fig. \ref{fig:operateur}, la courbe bleu représente la fonction min entre les sous-ensemble
+température moyenne et température élevé et la courbe verte représente la fonction max pour les mêmes
+sous-ensemble que la courbe bleu.
+
+\section{Implication floue}
+A partir de la règle \og si température basse alors chauffer fort \fg , nous utilisons l'implication
+de Mamdani pour construire la sortie \og puissance de chauffe \fg . L'implication de Mamdani dit que l'ensemble
+floue de sorti correspond à la fonction minimum de la logique floue pour les sous-ensemble pris en compte. En appliquant
+ce principe nous optenons le sous-ensemble de la Fig. \ref{fig:mamdani}.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=9cm]{mamdani.png}
+    \caption{Sortie \og puissance de chauffe fuzzifiée \fg}
+    \label{fig:mamdani}
+  \end{center}
+\end{figure}
+\newpage
+\section{Conclusion}
+Comme nous avons pu le voir, la logique floue est assez simple à implémenter et permet de modéliser des situations
+complexes dans des fonctions. 
 \end{document}
