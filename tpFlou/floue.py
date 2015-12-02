@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 #Calcul des fonction basse, moyenne et eleve
 def CalcTempB(i):
@@ -56,6 +57,12 @@ def Chauf(i):
     else:
         return 1
 
+def ChaufTemp(tab, mini):
+    result = []
+    for i in tab:
+        result.append(min(i, mini))
+    return result
+
 #calcul de la courbe
 temp = range(0, 40)
 puissanceChauf = range(0,15)
@@ -80,10 +87,12 @@ print("moyen = " + repr(temperatureM[16]))
 print("eleve = " + repr(temperatureE[16]))
 
 plt.title("Partition floue de la temperature")
-plt.plot(temp, temperatureB)
-plt.plot(temp, temperatureM)
-plt.plot(temp, temperatureE)
+plt.plot(temp, temperatureB, label='bas')
+plt.plot(temp, temperatureM, label='moyen')
+plt.plot(temp, temperatureE, label='eleve')
 plt.xlabel('Temperature')
+plt.axis([0, 40, -0.1, 1.1])
+plt.legend()
 plt.show()
 
 
@@ -93,9 +102,13 @@ minTemp = Opmin(temperatureB, temperatureM)
 maxTemp = Opmax(temperatureM, temperatureE)
 
 plt.title("Operateur de la logique floue")
-plt.plot(temp, minTemp)
-plt.plot(temp, maxTemp)
+plt.plot(temp, minTemp, label='min')
+plt.plot(temp, maxTemp, label='max')
 plt.xlabel('Temperature')
+plt.axis([0, 40, -0.1, 1.1])
+blue_patch = mpatches.Patch(color='blue')
+green_patch = mpatches.Patch(color='green')
+plt.legend()
 plt.show()
 
 
@@ -103,11 +116,16 @@ plt.show()
 
 plt.title("Chauffage")
 plt.plot(puissanceChauf, chauffe)
+plt.xlabel('Puissance chauffage')
+plt.axis([0, 15, -0.1, 1.1])
 plt.show()
 
 
 #Exo 3
 
+result = ChaufTemp(chauffe, 0.8)
 plt.title("Implication de Mamdani")
-plt.plot(puissanceChauf, Opmin(temperatureB, puissanceChauf))
+plt.plot(range(0, len(result)), result)
+plt.xlabel('Puissance chauffage')
+plt.axis([0, 15, -0.1, 1.1])
 plt.show()
