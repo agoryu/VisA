@@ -122,109 +122,42 @@ public class FCM_Visa_ implements PlugIn
 		////////////////////////////////
 		// FCM
 		///////////////////////////////
+		if(numMethode == 1) {
+			imax = nbpixels;  // nombre de pixels dans l'image
+			jmax = 3;  // nombre de composantes couleur
+			kmax=nbclasses;
+			double data[][] = new double[nbclasses][3];
+			int[] fixe=new int[3];
+			int xmin = 0;
+			int xmax = width;
+			int ymin = 0;
+			int ymax = height;
+			int rx, ry;
+			int x,y;
+			int epsilonx,epsilony;
 
-		imax = nbpixels;  // nombre de pixels dans l'image
-		jmax = 3;  // nombre de composantes couleur
-		kmax=nbclasses;
-		double data[][] = new double[nbclasses][3];
-		int[] fixe=new int[3];
-		int xmin = 0;
-		int xmax = width;
-		int ymin = 0;
-		int ymax = height;
-		int rx, ry;
-		int x,y;
-		int epsilonx,epsilony;
 
+			// Initialisation des centro�des (al�atoirement )
 
-		// Initialisation des centro�des (al�atoirement )
-
-		for(i=0;i<nbclasses;i++)
-		{
-			if(valeur==1)
+			for(i=0;i<nbclasses;i++)
 			{
-				epsilonx=rand((int)(width/(i+2)),(int)(width/2));
-				epsilony=rand((int)(height/(4)),(int)(height/2));
+				if(valeur==1)
+				{
+					epsilonx=rand((int)(width/(i+2)),(int)(width/2));
+					epsilony=rand((int)(height/(4)),(int)(height/2));
+				}
+				else
+				{
+					epsilonx=0;
+					epsilony=0;
+				}
+				rx = rand(xmin+epsilonx, xmax-epsilonx);
+				ry = rand(ymin+epsilony, ymax-epsilony);
+				ip.getPixel(rx,ry,init);
+				c[i][0] = init[0]; c[i][1] =init[1]; c[i][2] = init[2];
 			}
-			else
-			{
-				epsilonx=0;
-				epsilony=0;
-			}
-			rx = rand(xmin+epsilonx, xmax-epsilonx);
-			ry = rand(ymin+epsilony, ymax-epsilony);
-			ip.getPixel(rx,ry,init);
-			c[i][0] = init[0]; c[i][1] =init[1]; c[i][2] = init[2];
-		}
 
-		// Calcul de distance entre data et centroides
-		for(l = 0; l < nbpixels; l++)
-		{
-			for(k = 0; k < kmax; k++)
-			{
-				double r2 = Math.pow(red[l] - c[k][0], 2);
-				double g2 = Math.pow(green[l] - c[k][1], 2);
-				double b2 = Math.pow(blue[l] - c[k][2], 2);
-				Dprev[k][l] = r2 + g2 + b2;
-			}
-		}
-
-		// Initialisation des degr�s d'appartenance
-		//A COMPLETER
-		float membership = 0.0f;
-    for(i = 0 ; i < kmax ; i++){
-        for(j = 0 ; j < nbpixels ; j++){
-            membership = 0.0f;
-            for(k = 1 ; k < kmax ; k++){
-								if(Math.pow(Dprev[k][j], 2) < 1)
-									continue;
-                membership += Math.pow( (Math.pow(Dprev[i][j], 2)) / (Math.pow(Dprev[k][j], 2)), (2/(m-1)) );
-            }
-            Uprev[i][j] = Math.pow(membership, -1);
-						if(Uprev[i][j] > 1)
-							Uprev[i][j] = 1/Uprev[i][j];
-        }
-    }
-
-
-		////////////////////////////////////////////////////////////
-		// FIN INITIALISATION FCM
-		///////////////////////////////////////////////////////////
-
-
-		/////////////////////////////////////////////////////////////
-		// BOUCLE PRINCIPALE
-		////////////////////////////////////////////////////////////
-		iter = 0;
-		stab = 2;
-		seuil = valeur_seuil;
-
-
-		/////////////////// A COMPLETER ///////////////////////////////
-		while ((iter < itermax) && (stab > seuil))
-		{
-
-
-			// Update  the matrix of centroids
-			float num[] = new float[3];
-			float den;
-			for(k = 0 ; k < kmax ; k++){
-				num[0] = 0.0f;
-				num[1] = 0.0f;
-				num[2] = 0.0f;
-				den = 0.0f;
-        for(i = 0 ; i < nbpixels ; i++){
-        	num[0] += Math.pow(Uprev[k][i],m) * (double)red[i];
-        	num[1] += Math.pow(Uprev[k][i],m) * (double)green[i];
-        	num[2] += Math.pow(Uprev[k][i],m) * (double)blue[i];
-        	den += Math.pow(Uprev[k][i],m);
-        }
-
-        c[k][0] = num[0] / den;
-        c[k][1] = num[1] / den;
-        c[k][2] = num[2] / den;
-    	}
-			// Compute Dmat, the matrix of distances (euclidian) with the centro�ds
+			// Calcul de distance entre data et centroides
 			for(l = 0; l < nbpixels; l++)
 			{
 				for(k = 0; k < kmax; k++)
@@ -232,77 +165,499 @@ public class FCM_Visa_ implements PlugIn
 					double r2 = Math.pow(red[l] - c[k][0], 2);
 					double g2 = Math.pow(green[l] - c[k][1], 2);
 					double b2 = Math.pow(blue[l] - c[k][2], 2);
-					Dmat[k][l] = r2 + g2 + b2;
+					Dprev[k][l] = r2 + g2 + b2;
 				}
 			}
 
-			for(i = 0 ; i < kmax ; i++){
-				for(j = 0 ; j < nbpixels ; j++){
-					for(k = 1 ; k < kmax ; k++){
-						if(Math.pow(Dmat[k][j], 2) == 0)
-							continue;
-						Umat[i][j] += Math.pow( (Math.pow(Dmat[i][j], 2)) / (Math.pow(Dmat[k][j], 2)), (2/(m-1)) );
-					}
-					if(Umat[i][j] > 1)
-						Umat[i][j] = 1/Umat[i][j];
-				}
-			}
+			// Initialisation des degr�s d'appartenance
+			//A COMPLETER
+			float membership = 0.0f;
+	    for(i = 0 ; i < kmax ; i++){
+	        for(j = 0 ; j < nbpixels ; j++){
+	            membership = 0.0f;
+	            for(k = 1 ; k < kmax ; k++){
+									if(Math.pow(Dprev[k][j], 2) < 1)
+										continue;
+	                membership += Math.pow( (Math.pow(Dprev[i][j], 2)) / (Math.pow(Dprev[k][j], 2)), (2/(m-1)) );
+	            }
+	            Uprev[i][j] = Math.pow(membership, -1);
+							if(Uprev[i][j] > 1)
+								Uprev[i][j] = 1/Uprev[i][j];
+	        }
+	    }
 
-			for(i = 0 ; i < kmax ; i++){
-				for(j = 0 ; j < nbpixels ; j++){
-					Uprev[i][j] = Umat[i][j];
-					Dprev[i][j] = Dmat[i][j];
-				}
-			}
 
-			// Calculate difference between the previous partition and the new partition (performance index)
-			for(i = 0 ; i < kmax ; i++){
-				for(j = 0 ; j < nbpixels ; j++){
-					figJ[iter] = Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);
-				}
-			}
+			////////////////////////////////////////////////////////////
+			// FIN INITIALISATION FCM
+			///////////////////////////////////////////////////////////
 
-			if(iter > 0)
-				stab = figJ[iter] - figJ[iter-1];
 
-			iter++;
-			////////////////////////////////////////////////////////
+			/////////////////////////////////////////////////////////////
+			// BOUCLE PRINCIPALE
+			////////////////////////////////////////////////////////////
+			iter = 0;
+			stab = 2;
+			seuil = valeur_seuil;
 
-			// Affichage de l'image segment�e
-			double[] mat_array=new double[nbclasses];
-			l = 0;
-			for(i=0;i<width;i++)
+
+			/////////////////// A COMPLETER ///////////////////////////////
+			while ((iter < itermax) && (stab > seuil))
 			{
-				for(j = 0; j<height; j++)
+
+
+				// Update  the matrix of centroids
+				float num[] = new float[3];
+				float den;
+				for(k = 0 ; k < kmax ; k++){
+					num[0] = 0.0f;
+					num[1] = 0.0f;
+					num[2] = 0.0f;
+					den = 0.0f;
+	        for(i = 0 ; i < nbpixels ; i++){
+	        	num[0] += Math.pow(Uprev[k][i],m) * (double)red[i];
+	        	num[1] += Math.pow(Uprev[k][i],m) * (double)green[i];
+	        	num[2] += Math.pow(Uprev[k][i],m) * (double)blue[i];
+	        	den += Math.pow(Uprev[k][i],m);
+	        }
+
+	        c[k][0] = num[0] / den;
+	        c[k][1] = num[1] / den;
+	        c[k][2] = num[2] / den;
+	    	}
+				// Compute Dmat, the matrix of distances (euclidian) with the centro�ds
+				for(l = 0; l < nbpixels; l++)
 				{
-					for(k = 0; k<nbclasses; k++)
+					for(k = 0; k < kmax; k++)
 					{
-						mat_array[k]=Umat[k][l];
+						double r2 = Math.pow(red[l] - c[k][0], 2);
+						double g2 = Math.pow(green[l] - c[k][1], 2);
+						double b2 = Math.pow(blue[l] - c[k][2], 2);
+						Dmat[k][l] = r2 + g2 + b2;
 					}
-					int indice= IndiceMaxOfArray(mat_array,nbclasses) ;
-					int array[] = new int[3];
-					array[0] = (int)c[indice][0];
-					array[1] = (int)c[indice][1];
-					array[2] = (int)c[indice][2];
-					ipseg.putPixel(i, j, array);
-					l++;
+				}
+
+				for(i = 0 ; i < kmax ; i++){
+					for(j = 0 ; j < nbpixels ; j++){
+						for(k = 1 ; k < kmax ; k++){
+							if(Math.pow(Dmat[k][j], 2) == 0)
+								continue;
+							Umat[i][j] += Math.pow( (Math.pow(Dmat[i][j], 2)) / (Math.pow(Dmat[k][j], 2)), (2/(m-1)) );
+						}
+						if(Umat[i][j] > 1)
+							Umat[i][j] = 1/Umat[i][j];
+					}
+				}
+
+				for(i = 0 ; i < kmax ; i++){
+					for(j = 0 ; j < nbpixels ; j++){
+						Uprev[i][j] = Umat[i][j];
+						Dprev[i][j] = Dmat[i][j];
+					}
+				}
+
+				// Calculate difference between the previous partition and the new partition (performance index)
+				for(i = 0 ; i < kmax ; i++){
+					for(j = 0 ; j < nbpixels ; j++){
+						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);
+					}
+				}
+
+				if(iter > 0)
+					stab = figJ[iter] - figJ[iter-1];
+
+				iter++;
+				////////////////////////////////////////////////////////
+
+				// Affichage de l'image segment�e
+				double[] mat_array=new double[nbclasses];
+				l = 0;
+				for(i=0;i<width;i++)
+				{
+					for(j = 0; j<height; j++)
+					{
+						for(k = 0; k<nbclasses; k++)
+						{
+							mat_array[k]=Umat[k][l];
+						}
+						int indice= IndiceMaxOfArray(mat_array,nbclasses) ;
+						int array[] = new int[3];
+						array[0] = (int)c[indice][0];
+						array[1] = (int)c[indice][1];
+						array[2] = (int)c[indice][2];
+						ipseg.putPixel(i, j, array);
+						l++;
+					}
+				}
+				impseg.updateAndDraw();
+				//////////////////////////////////
+			}  // Fin boucle
+
+			double[] xplot= new double[itermax];
+			double[] yplot=new double[itermax];
+			for(int w = 0; w < itermax; w++)
+			{
+				xplot[w]=(double)w;	yplot[w]=(double) figJ[w];
+			}
+			Plot plot = new Plot("Performance Index (FCM)","iterations","J(P) value",xplot,yplot);
+			plot.setLineWidth(2);
+			plot.setColor(Color.blue);
+			plot.show();
+		}// Fin FCM
+
+		else if(numMethode == 2) {
+			imax = nbpixels;  // nombre de pixels dans l'image
+			jmax = 3;  // nombre de composantes couleur
+			kmax=nbclasses;
+			double data[][] = new double[nbclasses][3];
+			int[] fixe=new int[3];
+			int xmin = 0;
+			int xmax = width;
+			int ymin = 0;
+			int ymax = height;
+			int rx, ry;
+			int x,y;
+			int epsilonx,epsilony;
+			double min = 100000000000.0;
+
+
+			// Initialisation des centro�des (al�atoirement )
+
+			for(i=0;i<nbclasses;i++)
+			{
+				if(valeur==1)
+				{
+					epsilonx=rand((int)(width/(i+2)),(int)(width/2));
+					epsilony=rand((int)(height/(4)),(int)(height/2));
+				}
+				else
+				{
+					epsilonx=0;
+					epsilony=0;
+				}
+				rx = rand(xmin+epsilonx, xmax-epsilonx);
+				ry = rand(ymin+epsilony, ymax-epsilony);
+				ip.getPixel(rx,ry,init);
+				c[i][0] = init[0]; c[i][1] =init[1]; c[i][2] = init[2];
+			}
+
+			// Calcul de distance entre data et centroides
+			for(l = 0; l < nbpixels; l++)
+			{
+				min = 100000000000.0;
+				int position = 0;
+				for(k = 0; k < kmax; k++)
+				{
+					double r2 = Math.pow(red[l] - c[k][0], 2);
+					double g2 = Math.pow(green[l] - c[k][1], 2);
+					double b2 = Math.pow(blue[l] - c[k][2], 2);
+					Dprev[k][l] = r2 + g2 + b2;
+					Uprev[k][l] = 0.0;
+					if(Dprev[k][l] < min) {
+						min = Dprev[k][l];
+						position = k;
+					}
+				}
+				Uprev[position][l] = 1.0;
+			}
+
+			////////////////////////////////////////////////////////////
+			// FIN INITIALISATION FCM
+			///////////////////////////////////////////////////////////
+
+
+			/////////////////////////////////////////////////////////////
+			// BOUCLE PRINCIPALE
+			////////////////////////////////////////////////////////////
+			iter = 0;
+			stab = 2;
+			seuil = valeur_seuil;
+
+
+			/////////////////// A COMPLETER ///////////////////////////////
+			while ((iter < itermax) && (stab > seuil))
+			{
+
+
+				// Update  the matrix of centroids
+				float num[] = new float[3];
+				float den;
+				for(k = 0 ; k < kmax ; k++){
+					num[0] = 0.0f;
+					num[1] = 0.0f;
+					num[2] = 0.0f;
+					den = 0.0f;
+	        for(i = 0 ; i < nbpixels ; i++){
+	        	num[0] += Math.pow(Uprev[k][i],m) * (double)red[i];
+	        	num[1] += Math.pow(Uprev[k][i],m) * (double)green[i];
+	        	num[2] += Math.pow(Uprev[k][i],m) * (double)blue[i];
+	        	den += Math.pow(Uprev[k][i],m);
+	        }
+
+	        c[k][0] = num[0] / den;
+	        c[k][1] = num[1] / den;
+	        c[k][2] = num[2] / den;
+	    	}
+				// Compute Dmat, the matrix of distances (euclidian) with the centro�ds
+				for(l = 0; l < nbpixels; l++)
+				{
+					min = 100000000000.0;
+					int position = 0;
+					for(k = 0; k < kmax; k++)
+					{
+						double r2 = Math.pow(red[l] - c[k][0], 2);
+						double g2 = Math.pow(green[l] - c[k][1], 2);
+						double b2 = Math.pow(blue[l] - c[k][2], 2);
+						Dmat[k][l] = r2 + g2 + b2;
+						Umat[k][l] = 0.0;
+						if(Dmat[k][l] < min) {
+							min = Dmat[k][l];
+							position = k;
+						}
+					}
+					Umat[position][l] = 1.0;
+				}
+
+				for(i = 0 ; i < kmax ; i++){
+					for(j = 0 ; j < nbpixels ; j++){
+						Uprev[i][j] = Umat[i][j];
+						Dprev[i][j] = Dmat[i][j];
+					}
+				}
+
+				// Calculate difference between the previous partition and the new partition (performance index)
+				for(i = 0 ; i < kmax ; i++){
+					for(j = 0 ; j < nbpixels ; j++){
+						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);
+					}
+				}
+
+				if(iter > 0)
+					stab = figJ[iter] - figJ[iter-1];
+
+				iter++;
+				////////////////////////////////////////////////////////
+
+				// Affichage de l'image segment�e
+				double[] mat_array=new double[nbclasses];
+				l = 0;
+				for(i=0;i<width;i++)
+				{
+					for(j = 0; j<height; j++)
+					{
+						for(k = 0; k<nbclasses; k++)
+						{
+							mat_array[k]=Umat[k][l];
+						}
+						int indice= IndiceMaxOfArray(mat_array,nbclasses) ;
+						int array[] = new int[3];
+						array[0] = (int)c[indice][0];
+						array[1] = (int)c[indice][1];
+						array[2] = (int)c[indice][2];
+						ipseg.putPixel(i, j, array);
+						l++;
+					}
+				}
+				impseg.updateAndDraw();
+				//////////////////////////////////
+			}  // Fin boucle
+
+			double[] xplot= new double[itermax];
+			double[] yplot=new double[itermax];
+			for(int w = 0; w < itermax; w++)
+			{
+				xplot[w]=(double)w;	yplot[w]=(double) figJ[w];
+			}
+			Plot plot = new Plot("Performance Index (HCM)","iterations","J(P) value",xplot,yplot);
+			plot.setLineWidth(2);
+			plot.setColor(Color.blue);
+			plot.show();
+		} else if (numMethode == 3) {
+
+			imax = nbpixels;  // nombre de pixels dans l'image
+			jmax = 3;  // nombre de composantes couleur
+			kmax=nbclasses;
+			double data[][] = new double[nbclasses][3];
+			int[] fixe=new int[3];
+			int xmin = 0;
+			int xmax = width;
+			int ymin = 0;
+			int ymax = height;
+			int rx, ry;
+			int x,y;
+			int epsilonx,epsilony;
+			double Nmat[] = new double[nbclasses];
+			double Nprev[] = new double[nbclasses];
+
+
+			// Initialisation des centro�des (al�atoirement )
+
+			for(i=0;i<nbclasses;i++)
+			{
+				if(valeur==1)
+				{
+					epsilonx=rand((int)(width/(i+2)),(int)(width/2));
+					epsilony=rand((int)(height/(4)),(int)(height/2));
+				}
+				else
+				{
+					epsilonx=0;
+					epsilony=0;
+				}
+				rx = rand(xmin+epsilonx, xmax-epsilonx);
+				ry = rand(ymin+epsilony, ymax-epsilony);
+				ip.getPixel(rx,ry,init);
+				c[i][0] = init[0]; c[i][1] =init[1]; c[i][2] = init[2];
+			}
+
+			// Calcul de distance entre data et centroides
+			for(l = 0; l < nbpixels; l++)
+			{
+				for(k = 0; k < kmax; k++)
+				{
+					double r2 = Math.pow(red[l] - c[k][0], 2);
+					double g2 = Math.pow(green[l] - c[k][1], 2);
+					double b2 = Math.pow(blue[l] - c[k][2], 2);
+					Dprev[k][l] = r2 + g2 + b2;
 				}
 			}
-			impseg.updateAndDraw();
-			//////////////////////////////////
-		}  // Fin boucle
 
-		double[] xplot= new double[itermax];
-		double[] yplot=new double[itermax];
-		for(int w = 0; w < itermax; w++)
-		{
-			xplot[w]=(double)w;	yplot[w]=(double) figJ[w];
+			// Initialisation des degr�s d'appartenance
+			//A COMPLETER
+			float membership = 0.0f;
+	    for(i = 0 ; i < kmax ; i++){
+	        for(j = 0 ; j < nbpixels ; j++){
+	            membership = 0.0f;
+	            for(k = 1 ; k < kmax ; k++){
+									if(Math.pow(Dprev[k][j], 2) < 1)
+										continue;
+	                membership += Math.pow( (Math.pow(Dprev[i][j], 2)) / (Math.pow(Dprev[k][j], 2)), (2/(m-1)) );
+	            }
+	            Uprev[i][j] = Math.pow(membership, -1);
+							if(Uprev[i][j] > 1)
+								Uprev[i][j] = 1/Uprev[i][j];
+	        }
+	    }
+
+
+			////////////////////////////////////////////////////////////
+			// FIN INITIALISATION FCM
+			///////////////////////////////////////////////////////////
+
+
+			/////////////////////////////////////////////////////////////
+			// BOUCLE PRINCIPALE
+			////////////////////////////////////////////////////////////
+			iter = 0;
+			stab = 2;
+			seuil = valeur_seuil;
+
+
+			/////////////////// A COMPLETER ///////////////////////////////
+			while ((iter < itermax) && (stab > seuil))
+			{
+
+
+				// Update  the matrix of centroids
+				float num[] = new float[3];
+				float den;
+				for(k = 0 ; k < kmax ; k++){
+					num[0] = 0.0f;
+					num[1] = 0.0f;
+					num[2] = 0.0f;
+					den = 0.0f;
+					double nume = 0;
+					double denom = 0;
+					Nprev[k] = 0.0;
+	        for(i = 0 ; i < nbpixels ; i++){
+	        	num[0] += Math.pow(Uprev[k][i],m) * (double)red[i];
+	        	num[1] += Math.pow(Uprev[k][i],m) * (double)green[i];
+	        	num[2] += Math.pow(Uprev[k][i],m) * (double)blue[i];
+	        	den += Math.pow(Uprev[k][i],m);
+						nume += Uprev[k][i] * Dprev[k][i];
+						denom += Uprev[k][i];
+	        }
+					Nprev[k] = nume / denom;
+	        c[k][0] = num[0] / den;
+	        c[k][1] = num[1] / den;
+	        c[k][2] = num[2] / den;
+	    	}
+				// Compute Dmat, the matrix of distances (euclidian) with the centro�ds
+				for(l = 0; l < nbpixels; l++)
+				{
+					for(k = 0; k < kmax; k++)
+					{
+						double r2 = Math.pow(red[l] - c[k][0], 2);
+						double g2 = Math.pow(green[l] - c[k][1], 2);
+						double b2 = Math.pow(blue[l] - c[k][2], 2);
+						Dmat[k][l] = r2 + g2 + b2;
+					}
+				}
+
+				for(i = 0 ; i < kmax ; i++){
+					for(j = 0 ; j < nbpixels ; j++){
+						Umat[i][j] = 1/(1 + Math.pow(Math.pow(Dmat[i][j], 2) / Nprev[i], 1/(m-1)));
+					}
+				}
+
+				for(i = 0 ; i < kmax ; i++){
+					for(j = 0 ; j < nbpixels ; j++){
+						Uprev[i][j] = Umat[i][j];
+						Dprev[i][j] = Dmat[i][j];
+					}
+				}
+
+				// Calculate difference between the previous partition and the new partition (performance index)
+				double ni = 0;
+				for(i = 0 ; i < kmax ; i++){
+					for(j = 0 ; j < nbpixels ; j++){
+						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);
+					}
+				}
+
+				if(iter > 0)
+					stab = figJ[iter] - figJ[iter-1];
+
+				iter++;
+				////////////////////////////////////////////////////////
+
+				// Affichage de l'image segment�e
+				double[] mat_array=new double[nbclasses];
+				l = 0;
+				for(i=0;i<width;i++)
+				{
+					for(j = 0; j<height; j++)
+					{
+						for(k = 0; k<nbclasses; k++)
+						{
+							mat_array[k]=Umat[k][l];
+						}
+						int indice= IndiceMaxOfArray(mat_array,nbclasses) ;
+						int array[] = new int[3];
+						array[0] = (int)c[indice][0];
+						array[1] = (int)c[indice][1];
+						array[2] = (int)c[indice][2];
+						ipseg.putPixel(i, j, array);
+						l++;
+					}
+				}
+				impseg.updateAndDraw();
+				//////////////////////////////////
+			}  // Fin boucle
+
+			double[] xplot= new double[itermax];
+			double[] yplot=new double[itermax];
+			for(int w = 0; w < itermax; w++)
+			{
+				xplot[w]=(double)w;	yplot[w]=(double) figJ[w];
+			}
+			Plot plot = new Plot("Performance Index (PCM)","iterations","J(P) value",xplot,yplot);
+			plot.setLineWidth(2);
+			plot.setColor(Color.blue);
+			plot.show();
 		}
-		Plot plot = new Plot("Performance Index (FCM)","iterations","J(P) value",xplot,yplot);
-		plot.setLineWidth(2);
-		plot.setColor(Color.blue);
-		plot.show();
-	} // Fin FCM
+	}
+
+
 	int indice;
 	double min,max;
 
