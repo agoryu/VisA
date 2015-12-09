@@ -610,7 +610,7 @@ public class FCM_Visa_ implements PlugIn
 				double ni = 0;
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
-						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);
+						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2) + Nprev[i] * Math.pow(1 - Umat[i][j], m);
 					}
 				}
 
@@ -654,6 +654,9 @@ public class FCM_Visa_ implements PlugIn
 			plot.setLineWidth(2);
 			plot.setColor(Color.blue);
 			plot.show();
+		} else if (numMethode == 4) {
+
+
 		}
 	}
 
