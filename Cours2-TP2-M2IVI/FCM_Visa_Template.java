@@ -19,7 +19,7 @@ import javax.swing.event.*;
 import java.awt.Window.*;
 
 
-public class FCM_Visa_ implements PlugIn
+public class FCM_Visa_Template implements PlugIn
 {
 
 	class Vec
@@ -178,7 +178,7 @@ public class FCM_Visa_ implements PlugIn
 	            for(k = 1 ; k < kmax ; k++){
 									if(Math.pow(Dprev[k][j], 2) < 1)
 										continue;
-	                membership += Math.pow( (Math.pow(Dprev[i][j], 2)) / (Math.pow(Dprev[k][j], 2)), (2/(m-1)) );
+	                membership += Math.pow( Math.pow(Dprev[i][j], 2) / Math.pow(Dprev[k][j], 2), 2/(m-1) );
 	            }
 	            Uprev[i][j] = Math.pow(membership, -1);
 							if(Uprev[i][j] > 1)
@@ -241,7 +241,7 @@ public class FCM_Visa_ implements PlugIn
 						for(k = 1 ; k < kmax ; k++){
 							if(Math.pow(Dmat[k][j], 2) == 0)
 								continue;
-							Umat[i][j] += Math.pow( (Math.pow(Dmat[i][j], 2)) / (Math.pow(Dmat[k][j], 2)), (2/(m-1)) );
+							Umat[i][j] += Math.pow( Dmat[i][j] / Dmat[k][j], (2/(m-1)) );
 						}
 						if(Umat[i][j] > 1)
 							Umat[i][j] = 1/Umat[i][j];
@@ -485,8 +485,7 @@ public class FCM_Visa_ implements PlugIn
 			int rx, ry;
 			int x,y;
 			int epsilonx,epsilony;
-			double Nmat[] = new double[nbclasses];
-			double Nprev[] = new double[nbclasses];
+			double N[] = new double[nbclasses];
 
 
 			// Initialisation des centro�des (al�atoirement )
@@ -566,17 +565,15 @@ public class FCM_Visa_ implements PlugIn
 					num[2] = 0.0f;
 					den = 0.0f;
 					double nume = 0;
-					double denom = 0;
-					Nprev[k] = 0.0;
+					N[k] = 0.0;
 	        for(i = 0 ; i < nbpixels ; i++){
 	        	num[0] += Math.pow(Uprev[k][i],m) * (double)red[i];
 	        	num[1] += Math.pow(Uprev[k][i],m) * (double)green[i];
 	        	num[2] += Math.pow(Uprev[k][i],m) * (double)blue[i];
 	        	den += Math.pow(Uprev[k][i],m);
-						nume += Uprev[k][i] * Dprev[k][i];
-						denom += Uprev[k][i];
+						nume += Math.pow(Uprev[k][i],m) * Math.pow(Dprev[k][i], 2);
 	        }
-					Nprev[k] = nume / denom;
+					N[k] = nume / den;
 	        c[k][0] = num[0] / den;
 	        c[k][1] = num[1] / den;
 	        c[k][2] = num[2] / den;
@@ -595,7 +592,7 @@ public class FCM_Visa_ implements PlugIn
 
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
-						Umat[i][j] = 1/(1 + Math.pow(Math.pow(Dmat[i][j], 2) / Nprev[i], 1/(m-1)));
+						Umat[i][j] = 1/(1 + Math.pow(Math.pow(Dmat[i][j], 2) / N[i], 1/(m-1)));
 					}
 				}
 
@@ -607,12 +604,17 @@ public class FCM_Visa_ implements PlugIn
 				}
 
 				// Calculate difference between the previous partition and the new partition (performance index)
-				double ni = 0;
+				double ni = 0.0;
+				double sum = 0.0;
 				for(i = 0 ; i < kmax ; i++){
+					ni += N[i];
 					for(j = 0 ; j < nbpixels ; j++){
-						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2) + Nprev[i] * Math.pow(1 - Umat[i][j], m);
+						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);// + N[i] * Math.pow(1 - Umat[i][j], m);
+						sum += Math.pow(1 - Umat[i][j], m);
 					}
 				}
+
+				figJ[iter] += ni * sum;
 
 				if(iter > 0)
 					stab = figJ[iter] - figJ[iter-1];
@@ -783,6 +785,7 @@ public class FCM_Visa_ implements PlugIn
 
 				double alpha = 0.0;
 				double nume = 0.0;
+				double lambda = 2.0;
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
 						Uprev[i][j] = Umat[i][j];
@@ -790,14 +793,20 @@ public class FCM_Visa_ implements PlugIn
 						nume += Math.pow(Dmat[i][j], 2);
 					}
 				}
+				alpha = lambda * (nume / (kmax * nbpixels));
 
 				// Calculate difference between the previous partition and the new partition (performance index)
-				double lambda = 2.0;
+				double sum = 0.0;
 				for(i = 0 ; i < kmax ; i++){
+					double tmpU = 0.0;
 					for(j = 0 ; j < nbpixels ; j++){
-						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2) + ((lambda * nume/(kmax*nbpixels) * (Math.pow(1-Umat[i][j], m))));
+						tmpU += Umat[i][j];
+						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);
 					}
+					sum = Math.pow(alpha, 2) * Math.pow(1 - tmpU, m);
 				}
+
+				figJ[iter] += sum;
 
 				if(iter > 0)
 					stab = figJ[iter] - figJ[iter-1];
@@ -835,7 +844,7 @@ public class FCM_Visa_ implements PlugIn
 			{
 				xplot[w]=(double)w;	yplot[w]=(double) figJ[w];
 			}
-			Plot plot = new Plot("Performance Index (FCM)","iterations","J(P) value",xplot,yplot);
+			Plot plot = new Plot("Performance Index (Dave)","iterations","J(P) value",xplot,yplot);
 			plot.setLineWidth(2);
 			plot.setColor(Color.blue);
 			plot.show();
