@@ -171,18 +171,14 @@ public class FCM_Visa_Template implements PlugIn
 
 			// Initialisation des degr�s d'appartenance
 			//A COMPLETER
-			float membership = 0.0f;
+			double membership = 0.0;
 	    for(i = 0 ; i < kmax ; i++){
 	        for(j = 0 ; j < nbpixels ; j++){
-	            membership = 0.0f;
 	            for(k = 1 ; k < kmax ; k++){
-									if(Math.pow(Dprev[k][j], 2) < 1)
-										continue;
-	                membership += Math.pow( Math.pow(Dprev[i][j], 2) / Math.pow(Dprev[k][j], 2), 2/(m-1) );
+									if(Dprev[k][j] > 0)
+	                	membership += Math.pow(Dprev[i][j] / Dprev[k][j], 1/(m-1) );
 	            }
-	            Uprev[i][j] = Math.pow(membership, -1);
-							if(Uprev[i][j] > 1)
-								Uprev[i][j] = 1/Uprev[i][j];
+							Uprev[i][j] = membership;
 	        }
 	    }
 
@@ -239,12 +235,10 @@ public class FCM_Visa_Template implements PlugIn
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
 						for(k = 1 ; k < kmax ; k++){
-							if(Math.pow(Dmat[k][j], 2) == 0)
-								continue;
-							Umat[i][j] += Math.pow( Dmat[i][j] / Dmat[k][j], (2/(m-1)) );
+							if(Dmat[k][j] > 0)
+								Umat[i][j] += Math.pow( Dmat[i][j] / Dmat[k][j], (1/(m-1)) );
 						}
-						if(Umat[i][j] > 1)
-							Umat[i][j] = 1/Umat[i][j];
+						Umat[i][j] = 1.0/Umat[i][j];
 					}
 				}
 
@@ -258,12 +252,12 @@ public class FCM_Visa_Template implements PlugIn
 				// Calculate difference between the previous partition and the new partition (performance index)
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
-						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);
+						figJ[iter] += Math.pow(Umat[i][j], m) * Dmat[i][j];
 					}
 				}
 
 				if(iter > 0)
-					stab = figJ[iter] - figJ[iter-1];
+					stab = Math.abs(figJ[iter] - figJ[iter-1]);
 
 				iter++;
 				////////////////////////////////////////////////////////
@@ -427,12 +421,12 @@ public class FCM_Visa_Template implements PlugIn
 				// Calculate difference between the previous partition and the new partition (performance index)
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
-						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);
+						figJ[iter] += Math.pow(Umat[i][j], m) * Dmat[i][j];
 					}
 				}
 
 				if(iter > 0)
-					stab = figJ[iter] - figJ[iter-1];
+					stab = Math.abs(figJ[iter] - figJ[iter-1]);
 
 				iter++;
 				////////////////////////////////////////////////////////
@@ -525,15 +519,11 @@ public class FCM_Visa_Template implements PlugIn
 			float membership = 0.0f;
 	    for(i = 0 ; i < kmax ; i++){
 	        for(j = 0 ; j < nbpixels ; j++){
-	            membership = 0.0f;
 	            for(k = 1 ; k < kmax ; k++){
-									if(Math.pow(Dprev[k][j], 2) < 1)
-										continue;
-	                membership += Math.pow( (Math.pow(Dprev[i][j], 2)) / (Math.pow(Dprev[k][j], 2)), (2/(m-1)) );
+									if(Dprev[k][j] > 0)
+	                	membership += Math.pow( Dprev[i][j] / Dprev[k][j], (1/(m-1)) );
 	            }
-	            Uprev[i][j] = Math.pow(membership, -1);
-							if(Uprev[i][j] > 1)
-								Uprev[i][j] = 1/Uprev[i][j];
+							Uprev[i][j] = membership;
 	        }
 	    }
 
@@ -571,7 +561,7 @@ public class FCM_Visa_Template implements PlugIn
 	        	num[1] += Math.pow(Uprev[k][i],m) * (double)green[i];
 	        	num[2] += Math.pow(Uprev[k][i],m) * (double)blue[i];
 	        	den += Math.pow(Uprev[k][i],m);
-						nume += Math.pow(Uprev[k][i],m) * Math.pow(Dprev[k][i], 2);
+						nume += Math.pow(Uprev[k][i],m) * Dprev[k][i];
 	        }
 					N[k] = nume / den;
 	        c[k][0] = num[0] / den;
@@ -592,7 +582,7 @@ public class FCM_Visa_Template implements PlugIn
 
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
-						Umat[i][j] = 1/(1 + Math.pow(Math.pow(Dmat[i][j], 2) / N[i], 1/(m-1)));
+						Umat[i][j] = 1.0/(1.0 + Math.pow(Dmat[i][j] / N[i], 1/(m-1)));
 					}
 				}
 
@@ -609,7 +599,7 @@ public class FCM_Visa_Template implements PlugIn
 				for(i = 0 ; i < kmax ; i++){
 					ni += N[i];
 					for(j = 0 ; j < nbpixels ; j++){
-						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);// + N[i] * Math.pow(1 - Umat[i][j], m);
+						figJ[iter] += Math.pow(Umat[i][j], m) * Dmat[i][j];
 						sum += Math.pow(1 - Umat[i][j], m);
 					}
 				}
@@ -617,7 +607,7 @@ public class FCM_Visa_Template implements PlugIn
 				figJ[iter] += ni * sum;
 
 				if(iter > 0)
-					stab = figJ[iter] - figJ[iter-1];
+					stab = Math.abs(figJ[iter] - figJ[iter-1]);
 
 				iter++;
 				////////////////////////////////////////////////////////
@@ -670,7 +660,7 @@ public class FCM_Visa_Template implements PlugIn
 			int rx, ry;
 			int x,y;
 			int epsilonx,epsilony;
-
+			double Unoise[] = new double[nbpixels];
 
 			// Initialisation des centro�des (al�atoirement )
 
@@ -706,18 +696,14 @@ public class FCM_Visa_Template implements PlugIn
 
 			// Initialisation des degr�s d'appartenance
 			//A COMPLETER
-			float membership = 0.0f;
+			double membership = 0.0f;
 	    for(i = 0 ; i < kmax ; i++){
 	        for(j = 0 ; j < nbpixels ; j++){
-	            membership = 0.0f;
 	            for(k = 1 ; k < kmax ; k++){
-									if(Math.pow(Dprev[k][j], 2) < 1)
-										continue;
-	                membership += Math.pow( (Math.pow(Dprev[i][j], 2)) / (Math.pow(Dprev[k][j], 2)), (2/(m-1)) );
+									if(Dprev[k][j] > 0)
+	                	membership += Math.pow( Dprev[i][j] / Dprev[k][j], (1/(m-1)) );
 	            }
-	            Uprev[i][j] = Math.pow(membership, -1);
-							if(Uprev[i][j] > 1)
-								Uprev[i][j] = 1/Uprev[i][j];
+							Uprev[i][j] = membership;
 	        }
 	    }
 
@@ -773,13 +759,12 @@ public class FCM_Visa_Template implements PlugIn
 
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
+						Unoise[j] = 0;
 						for(k = 1 ; k < kmax ; k++){
-							if(Math.pow(Dmat[k][j], 2) == 0)
-								continue;
-							Umat[i][j] += Math.pow( (Math.pow(Dmat[i][j], 2)) / (Math.pow(Dmat[k][j], 2)), (2/(m-1)) );
+							if(Dmat[k][j] > 0)
+								Umat[i][j] += Math.pow( Dmat[i][j] / Dmat[k][j], (1/(m-1)) );
+								Unoise[j] += Umat[i][j];
 						}
-						if(Umat[i][j] > 1)
-							Umat[i][j] = 1/Umat[i][j];
 					}
 				}
 
@@ -790,26 +775,25 @@ public class FCM_Visa_Template implements PlugIn
 					for(j = 0 ; j < nbpixels ; j++){
 						Uprev[i][j] = Umat[i][j];
 						Dprev[i][j] = Dmat[i][j];
-						nume += Math.pow(Dmat[i][j], 2);
+						nume += Dmat[i][j];
 					}
 				}
 				alpha = lambda * (nume / (kmax * nbpixels));
 
 				// Calculate difference between the previous partition and the new partition (performance index)
 				double sum = 0.0;
-				for(i = 0 ; i < kmax ; i++){
-					double tmpU = 0.0;
-					for(j = 0 ; j < nbpixels ; j++){
-						tmpU += Umat[i][j];
-						figJ[iter] += Math.pow(Umat[i][j], m) * Math.pow(Dmat[i][j], 2);
+				for(i = 0 ; i < nbpixels; i++){
+					for(j = 0 ; j < kmax; j++){
+						figJ[iter] += Math.pow(Umat[j][i], m) * Dmat[j][i];
 					}
-					sum = Math.pow(alpha, 2) * Math.pow(1 - tmpU, m);
+					figJ[iter] += alpha * Math.pow(1 - Unoise[i], m);
+					//sum = Math.pow(alpha, 2) * Math.pow(1 - tmpU, m);
 				}
 
-				figJ[iter] += sum;
+				//figJ[iter] += sum;
 
 				if(iter > 0)
-					stab = figJ[iter] - figJ[iter-1];
+					stab = Math.abs(figJ[iter] - figJ[iter-1]);
 
 				iter++;
 				////////////////////////////////////////////////////////
