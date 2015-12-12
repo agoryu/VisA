@@ -594,17 +594,15 @@ public class FCM_Visa_Template implements PlugIn
 				}
 
 				// Calculate difference between the previous partition and the new partition (performance index)
-				double ni = 0.0;
 				double sum = 0.0;
 				for(i = 0 ; i < kmax ; i++){
-					ni += N[i];
 					for(j = 0 ; j < nbpixels ; j++){
 						figJ[iter] += Math.pow(Umat[i][j], m) * Dmat[i][j];
-						sum += Math.pow(1 - Umat[i][j], m);
+						sum += N[i] * Math.pow(1 - Umat[i][j], m);
 					}
 				}
 
-				figJ[iter] += ni * sum;
+				figJ[iter] += sum;
 
 				if(iter > 0)
 					stab = Math.abs(figJ[iter] - figJ[iter-1]);
