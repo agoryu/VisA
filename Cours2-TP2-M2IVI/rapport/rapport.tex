@@ -59,7 +59,7 @@
 %\end{abstract}
 
 \section{Introduction}
-Nous avons vu dans le TP précédent ce qu'était la logique floue au travers d'exemple ne portant pas 
+Nous avons vu dans le TP précédent ce qu'était la logique floue au travers d'exemples ne portant pas 
 sur la segmentation d'image. La logique floue permet en effet d'avoir un niveau d'incertitude sur 
 l'appartenance d'une donnée à une classe. Dans ce TP, nous allons voir comment appliquer cette méthode
 à la segmentation d'image couleur. Par la suite, nous verrons différentes méthodes dérivées du 
@@ -75,35 +75,35 @@ l'image de la Fig. \ref{fig:reference}.
 \end{figure}
 
 \section{FCM (Fuzzy C-Means)}
-Dans un premier temps nous utiliser la méthode de la logique floue pour segmenter une image couleur. 
-Cette méthode est très proche de l'algorithme du K-means. La différence entre les deux algorithme
+Dans un premier temps, nous utilisons la méthode de la logique floue pour segmenter une image couleur. 
+Cette méthode est très proche de l'algorithme du K-means. La différence entre les deux algorithmes
 est que dans l'algorithme FCM une donnée n'appartient pas à une classe, mais elle a une certaine
 probabilité d'y appartenir. Tout comme pour K-means, l'algorithme a besoin d'un certain nombre de
-paramètre pour fonctionner. Ces paramètres sont fournis par l'utilisateur.
+paramètres pour fonctionner. Ces paramètres sont fournis par l'utilisateur.
 \begin{itemize}
-  \item c : le nombre de classe à segmenter. Ce paramètre détermine le nombre de centroïde à créer.
-  \item m : le degré d'appartenance d'une donnée. Ce paramètre permet d'avoir un plus ou moins grand écart
-  entre les taux d'appartenances aux classes. Plus il sera élevé plus l'appartenance d'une donnée à une classe
+  \item c : le nombre de classes à segmenter : ce paramètre détermine le nombre de centroïdes à créer.
+  \item m : le degré d'appartenance d'une donnée : ce paramètre permet d'avoir un plus ou moins grand écart
+  entre les taux d'appartenance aux classes. Plus il sera élevé, plus l'appartenance d'une donnée à une classe
   est forte. Cependant, si m est trop élevé, la correction des erreurs par les étapes suivantes est plus difficile.
-  \item seuil : le seuil de stabilité à partir de laquelle l'algorithme peut s’arrêter.
+  \item seuil : le seuil de stabilité à partir duquel l'algorithme peut s’arrêter.
 \end{itemize}
 Au début de l'algorithme, les centroïdes sont placés aléatoirement parmi les données. Puis à chaque itération,
-ces centoïdes se rapproche du centre d'un ensemble de données tout en s'éloignant les uns des autres. La détermination
+ces centoïdes se rapprochent du centre d'un ensemble de données, tout en s'éloignant les uns des autres. La détermination
 de la position des centroïdes se fait grâce au calcul (Eq. \ref{centroide}).
 \begin{equation}
   \label{centroide}
   \forall i \in \{1, 2, ..., c\} \ v_i = \frac{\sum_{j=1}^{n} u_{ij}^m * x_j}{\sum_{j=1}^{n} u_{ij}^m}
 \end{equation}
-Dans cette équation, n est le nombre de pixels. La matrice $u$ représente
+Dans cette équation, $n$ est le nombre de pixels. La matrice $u$ représente
 le degré d'appartenance des pixels pour une classe. Il est possible de calculer cette matrice avec l'équation
 (Eq. \ref{membershipDegree}).
 \begin{equation}
  \label{membershipDegree}
   u_{ij}=\left[\sum_{k=1}^{c} \left(\frac{d^2(x_j, v_i)}{d^2(x_j, v_k)}\right)^{\frac{2}{m-1}}\right]^{-1}
 \end{equation}
-Ces deux calculs permettent donc de placer les centroïde au centre des classes détecté. Il faut maintenant permettre
+Ces deux calculs permettent donc de placer les centroïdes au centre des classes détectées. Il faut maintenant permettre
 à l'algorithme de s’arrêter lorsque le seuil de stabilité est atteint. Pour cela, il faut calculer la performance
-de l'étape qui a été calculé, c'est-à-dire qu'il faut minimiser le taux d'appartenance des pixels par la distance
+de l'étape qui a été calculée, c'est-à-dire qu'il faut minimiser le taux d'appartenance des pixels par la distance
 avec le centroïde (Eq. \ref{jp}) et comparer ce résultat avec celui de l'étape précédente (Eq. \ref{jpMin}).
 
 \begin{equation}
@@ -118,7 +118,7 @@ avec le centroïde (Eq. \ref{jp}) et comparer ce résultat avec celui de l'étap
 
 Nous obtenons la segmentation de la Fig. \ref{fig:segmentationFCM}, qui nous permet d'avoir
 un résultat très intéressant. On peut voir sur la courbe représentant $J_{FCM}(P)$ (Fig. \ref{fig:graphFCM}), que l'algorithme
-fonctionne en très peu d'étape et que dès la première étape il est très proche du bon résultat.
+fonctionne en très peu d'étapes et que dès la première étape, il est très proche du bon résultat.
 
 \begin{figure}[!h]
   \begin{center}
@@ -139,8 +139,8 @@ fonctionne en très peu d'étape et que dès la première étape il est très pr
 \section{HCM (Hard C-Means)}
 L'algorithme HCM est similaire à l'algorithme K-means. Il n'utilise pas de degré d'appartenance
 d'une donnée à une classe, soit la donnée appartient à une classe, soit elle n'y appartient pas.
-Le changement majeur dans l'algorithme du FCM est donc le calcul de $u_{ij}$. Pour déterminer à quel
-classe appartient une donnée on compare avec la distance de sa coordonnée avec chaque centroïde et
+Le changement majeur dans l'algorithme du FCM est donc le calcul de $u_{ij}$. Pour déterminer à quelle
+classe appartient une donnée, on compare avec la distance de sa coordonnée avec chaque centroïde et
 on choisit la classe ayant la plus courte distance. Cela nous fournit le résultat de la Fig. \ref{fig:hcm}.\\
 
 \begin{figure}[!h]
@@ -160,11 +160,11 @@ on choisit la classe ayant la plus courte distance. Cela nous fournit le résult
 \end{figure}
 
 Encore une fois, la segmentation est efficace, cependant, l'algorithme met plus de temps
-à trouver la solution que avec FCM.
+à trouver la solution qu'avec FCM.
 \newpage
 \section{PCM (Possibilistic C-Means)}
 L'algorithme PCM fonctionne sur le même principe que le FCM tout en introduisant une valeur de pénalité
-sur l'appartenance d'une donnée à une classe. Cette pénalité exclu les points trop éloigné de la classe. 
+sur l'appartenance d'une donnée à une classe. Cette pénalité exclut les points trop éloignés de la classe. 
 Le calcul de cette pénalité est donné dans l'Eq. \ref{penalite}.
 
 \begin{equation}
@@ -172,7 +172,7 @@ Le calcul de cette pénalité est donné dans l'Eq. \ref{penalite}.
   \eta_i = \frac{\sum_{j=1}^{n} u_{ij}^m * x_j}{\sum_{j=1}^{n} u_{ij}^m}
 \end{equation}
 
-Cette pénalité est appliqué au calcul de $u_ij$ (Eq. \ref{uijPCM}) et à la performance de l'étape courante (Eq. \ref{jPCM}).
+Cette pénalité est appliquée au calcul de $u_ij$ (Eq. \ref{uijPCM}) et à la performance de l'étape courante (Eq. \ref{jPCM}).
 
 \begin{equation}
   \label{uijPCM}
@@ -199,11 +199,11 @@ Cette pénalité est appliqué au calcul de $u_ij$ (Eq. \ref{uijPCM}) et à la p
   \end{center}
 \end{figure}
 
-On voit que PCM est un peu moins efficace que les précédent, car celui-ci ne détecte pas toutes les classes.
+On voit que PCM est un peu moins efficace que les précédents, car celui-ci ne détecte pas toutes les classes.
 
 \section{Algorithme de Davé}
-L'algorithme de Davé fonctionne a peu près de la même façon que l'algorithme PCM, sauf qu'il exclu
-les pixels trop éloigné de la classe en considérant que ceux-ci sont du bruit.
+L'algorithme de Davé fonctionne a peu près de la même façon que l'algorithme PCM, sauf qu'il exclut
+les pixels trop éloignés de la classe en considérant que ceux-ci sont du bruit.
 
 \begin{figure}[!h]
   \begin{center}
@@ -225,7 +225,7 @@ les pixels trop éloigné de la classe en considérant que ceux-ci sont du bruit
 \section{Conclusion}
 Comme nous avons pu le voir au travers de ce TP, la logique floue permet d'avoir 
 une segmentation équivalente à une méthode binaire, tout en trouvant le résultat 
-plus rapidement. De plus, les résultats obtenu avec ce type de méthode sont très 
-intéressant malgré qu'elles aient besoin de nombreux paramètres. 
+plus rapidement. De plus, les résultats obtenus avec ce type de méthodes sont très 
+intéressants, bien que ces méthodes aient besoin de nombreux paramètres. 
   
 \end{document}
