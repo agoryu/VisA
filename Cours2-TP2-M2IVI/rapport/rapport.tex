@@ -118,7 +118,7 @@ avec le centroïde (Eq. \ref{jp}) et comparer ce résultat avec celui de l'étap
 
 Nous obtenons la segmentation de la Fig. \ref{fig:segmentationFCM}, qui nous permet d'avoir
 un résultat très intéressant. On peut voir sur la courbe représentant $J_{FCM}(P)$ (Fig. \ref{fig:graphFCM}), que l'algorithme
-fonctionne en très peu d'étapes et que dès la première étape, il est très proche du bon résultat.
+fonctionne en très peu d'étapes.
 
 \begin{figure}[!h]
   \begin{center}
@@ -159,7 +159,8 @@ on choisit la classe ayant la plus courte distance. Cela nous fournit le résult
   \end{center}
 \end{figure}
 
-Encore une fois, la segmentation est efficace, cependant, l'algorithme met plus de temps
+Encore une fois, la segmentation est efficace et on voit que $J_{HCM}(P)$ fournit des résultats dès la première
+itétation. Cependant, l'algorithme met plus de temps
 à trouver la solution qu'avec FCM.
 \newpage
 \section{PCM (Possibilistic C-Means)}
@@ -199,7 +200,8 @@ Cette pénalité est appliquée au calcul de $u_ij$ (Eq. \ref{uijPCM}) et à la 
   \end{center}
 \end{figure}
 
-On voit que PCM est un peu moins efficace que les précédents, car celui-ci ne détecte pas toutes les classes.
+Le résultat de l'algorithme est le même, tout en obtenant des résultat pour $J_{PCM}(P)$ dès les premières itération.
+Cependant, cet algorithme est un peu plus lent que HCM.
 
 \section{Algorithme de Davé}
 L'algorithme de Davé fonctionne a peu près de la même façon que l'algorithme PCM, sauf qu'il exclut
@@ -226,6 +228,6 @@ les pixels trop éloignés de la classe en considérant que ceux-ci sont du brui
 Comme nous avons pu le voir au travers de ce TP, la logique floue permet d'avoir 
 une segmentation équivalente à une méthode binaire, tout en trouvant le résultat 
 plus rapidement. De plus, les résultats obtenus avec ce type de méthodes sont très 
-intéressants, bien que ces méthodes aient besoin de nombreux paramètres. 
+intéressants, bien que ces méthodes aient besoin de nombreux paramètres.
   
 \end{document}

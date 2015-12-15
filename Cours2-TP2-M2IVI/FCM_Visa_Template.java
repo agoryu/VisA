@@ -171,14 +171,12 @@ public class FCM_Visa_Template implements PlugIn
 
 			// Initialisation des degr�s d'appartenance
 			//A COMPLETER
-			double membership = 0.0;
 	    for(i = 0 ; i < kmax ; i++){
 	        for(j = 0 ; j < nbpixels ; j++){
 	            for(k = 1 ; k < kmax ; k++){
 									if(Dprev[k][j] > 0)
-	                	membership += Math.pow(Dprev[i][j] / Dprev[k][j], 1/(m-1) );
+	                	Uprev[i][j] += Math.pow(Dprev[i][j] / Dprev[k][j], 1/(m-1) );
 	            }
-							Uprev[i][j] = membership;
 	        }
 	    }
 
@@ -234,6 +232,7 @@ public class FCM_Visa_Template implements PlugIn
 
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
+						Umat[i][j] = 0.0;
 						for(k = 1 ; k < kmax ; k++){
 							if(Dmat[k][j] > 0)
 								Umat[i][j] += Math.pow( Dmat[i][j] / Dmat[k][j], (1/(m-1)) );
@@ -466,11 +465,11 @@ public class FCM_Visa_Template implements PlugIn
 			plot.setColor(Color.blue);
 			plot.show();
 		} else if (numMethode == 3) {
-
 			imax = nbpixels;  // nombre de pixels dans l'image
 			jmax = 3;  // nombre de composantes couleur
 			kmax=nbclasses;
 			double data[][] = new double[nbclasses][3];
+			double N[] = new double[nbclasses];
 			int[] fixe=new int[3];
 			int xmin = 0;
 			int xmax = width;
@@ -479,7 +478,6 @@ public class FCM_Visa_Template implements PlugIn
 			int rx, ry;
 			int x,y;
 			int epsilonx,epsilony;
-			double N[] = new double[nbclasses];
 
 
 			// Initialisation des centro�des (al�atoirement )
@@ -515,17 +513,17 @@ public class FCM_Visa_Template implements PlugIn
 			}
 
 			// Initialisation des degr�s d'appartenance
-			//A COMPLETER
-			float membership = 0.0f;
-	    for(i = 0 ; i < kmax ; i++){
-	        for(j = 0 ; j < nbpixels ; j++){
-	            for(k = 1 ; k < kmax ; k++){
-									if(Dprev[k][j] > 0)
-	                	membership += Math.pow( Dprev[i][j] / Dprev[k][j], (1/(m-1)) );
-	            }
-							Uprev[i][j] = membership;
-	        }
-	    }
+			for(j = 0; j < nbpixels; j++) {
+      	for(i = 0; i < kmax; i++) {
+        	Uprev[i][j] = 0;
+        	for(k = 0; k < kmax; k++) {
+          	if(Dprev[k][j] != 0)
+            	Uprev[i][j] += Math.pow(Dprev[i][j]/Dprev[k][j], 1/(m-1));
+        	}
+        	if(Uprev[i][j] >= 1)
+          	Uprev[i][j] = 1/Uprev[i][j];
+      	}
+    	}
 
 
 			////////////////////////////////////////////////////////////
@@ -548,21 +546,23 @@ public class FCM_Visa_Template implements PlugIn
 
 				// Update  the matrix of centroids
 				float num[] = new float[3];
-				float den;
+				double den;
+				double nume;
 				for(k = 0 ; k < kmax ; k++){
 					num[0] = 0.0f;
 					num[1] = 0.0f;
 					num[2] = 0.0f;
 					den = 0.0f;
-					double nume = 0;
-					N[k] = 0.0;
+					nume = 0.0f;
 	        for(i = 0 ; i < nbpixels ; i++){
 	        	num[0] += Math.pow(Uprev[k][i],m) * (double)red[i];
 	        	num[1] += Math.pow(Uprev[k][i],m) * (double)green[i];
 	        	num[2] += Math.pow(Uprev[k][i],m) * (double)blue[i];
 	        	den += Math.pow(Uprev[k][i],m);
-						nume += Math.pow(Uprev[k][i],m) * Dprev[k][i];
+
+          	nume += Math.pow(Uprev[k][i], m) * Dprev[k][i];
 	        }
+
 					N[k] = nume / den;
 	        c[k][0] = num[0] / den;
 	        c[k][1] = num[1] / den;
@@ -582,7 +582,13 @@ public class FCM_Visa_Template implements PlugIn
 
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
-						Umat[i][j] = 1.0/(1.0 + Math.pow(Dmat[i][j] / N[i], 1/(m-1)));
+						Umat[i][j] = 0.0;
+						for(k = 1 ; k < kmax ; k++){
+								//Umat[i][j] += Math.pow( Dmat[i][j] / Dmat[k][j], (1/(m-1)) );
+							Umat[i][j] = 1 + Math.pow(Dmat[i][j]/N[i], 1/(m-1));
+							if(Umat[i][j] != 0)
+		            Umat[i][j] = 1/Umat[i][j];
+						}
 					}
 				}
 
@@ -594,15 +600,12 @@ public class FCM_Visa_Template implements PlugIn
 				}
 
 				// Calculate difference between the previous partition and the new partition (performance index)
-				double sum = 0.0;
-				for(i = 0 ; i < kmax ; i++){
-					for(j = 0 ; j < nbpixels ; j++){
-						figJ[iter] += Math.pow(Umat[i][j], m) * Dmat[i][j];
-						sum += N[i] * Math.pow(1 - Umat[i][j], m);
-					}
-				}
-
-				figJ[iter] += sum;
+				figJ[iter] = 0;
+      	for(i = 0; i < nbpixels; i++) {
+        	for(k = 0; k < nbclasses; k++) {
+            figJ[iter] += Math.pow(Umat[k][i], m) * Dmat[k][i] + N[k] * Math.pow(1 - Umat[k][i], m);
+        	}
+      	}
 
 				if(iter > 0)
 					stab = Math.abs(figJ[iter] - figJ[iter-1]);
@@ -640,10 +643,11 @@ public class FCM_Visa_Template implements PlugIn
 			{
 				xplot[w]=(double)w;	yplot[w]=(double) figJ[w];
 			}
-			Plot plot = new Plot("Performance Index (PCM)","iterations","J(P) value",xplot,yplot);
+			Plot plot = new Plot("Performance Index (FCM)","iterations","J(P) value",xplot,yplot);
 			plot.setLineWidth(2);
 			plot.setColor(Color.blue);
 			plot.show();
+
 		} else if (numMethode == 4) {
 
 			imax = nbpixels;  // nombre de pixels dans l'image
@@ -694,14 +698,13 @@ public class FCM_Visa_Template implements PlugIn
 
 			// Initialisation des degr�s d'appartenance
 			//A COMPLETER
-			double membership = 0.0f;
 	    for(i = 0 ; i < kmax ; i++){
 	        for(j = 0 ; j < nbpixels ; j++){
+							Uprev[i][j] = 0.0f;
 	            for(k = 1 ; k < kmax ; k++){
 									if(Dprev[k][j] > 0)
-	                	membership += Math.pow( Dprev[i][j] / Dprev[k][j], (1/(m-1)) );
+	                	Uprev[i][j] += Math.pow( Dprev[i][j] / Dprev[k][j], (1/(m-1)) );
 	            }
-							Uprev[i][j] = membership;
 	        }
 	    }
 
@@ -757,11 +760,12 @@ public class FCM_Visa_Template implements PlugIn
 
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
-						Unoise[j] = 0;
+						Unoise[j] = 0.0;
+						Umat[i][j] = 0.0;
 						for(k = 1 ; k < kmax ; k++){
 							if(Dmat[k][j] > 0)
 								Umat[i][j] += Math.pow( Dmat[i][j] / Dmat[k][j], (1/(m-1)) );
-								Unoise[j] += Umat[i][j];
+							Unoise[j] += Umat[i][j];
 						}
 					}
 				}
@@ -779,13 +783,10 @@ public class FCM_Visa_Template implements PlugIn
 				alpha = lambda * (nume / (kmax * nbpixels));
 
 				// Calculate difference between the previous partition and the new partition (performance index)
-				double sum = 0.0;
 				for(i = 0 ; i < nbpixels; i++){
 					for(j = 0 ; j < kmax; j++){
-						figJ[iter] += Math.pow(Umat[j][i], m) * Dmat[j][i];
+						figJ[iter] += Math.pow(Umat[j][i], m) * Dmat[j][i] + alpha * Math.pow(1 - Unoise[i], m);
 					}
-					figJ[iter] += alpha * Math.pow(1 - Unoise[i], m);
-					//sum = Math.pow(alpha, 2) * Math.pow(1 - tmpU, m);
 				}
 
 				//figJ[iter] += sum;
