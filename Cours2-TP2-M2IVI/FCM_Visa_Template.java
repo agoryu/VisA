@@ -119,6 +119,7 @@ public class FCM_Visa_Template implements PlugIn
 				l++;
 			}
 		}
+
 		////////////////////////////////
 		// FCM
 		///////////////////////////////
@@ -295,8 +296,11 @@ public class FCM_Visa_Template implements PlugIn
 			plot.setLineWidth(2);
 			plot.setColor(Color.blue);
 			plot.show();
-		}// Fin FCM
+		}
 
+		////////////////////////////////
+		// HCM
+		///////////////////////////////
 		else if(numMethode == 2) {
 			imax = nbpixels;  // nombre de pixels dans l'image
 			jmax = 3;  // nombre de composantes couleur
@@ -354,7 +358,7 @@ public class FCM_Visa_Template implements PlugIn
 			}
 
 			////////////////////////////////////////////////////////////
-			// FIN INITIALISATION FCM
+			// FIN INITIALISATION HCM
 			///////////////////////////////////////////////////////////
 
 
@@ -464,6 +468,10 @@ public class FCM_Visa_Template implements PlugIn
 			plot.setLineWidth(2);
 			plot.setColor(Color.blue);
 			plot.show();
+
+			////////////////////////////////
+			// PCM
+			///////////////////////////////
 		} else if (numMethode == 3) {
 			imax = nbpixels;  // nombre de pixels dans l'image
 			jmax = 3;  // nombre de composantes couleur
@@ -527,7 +535,7 @@ public class FCM_Visa_Template implements PlugIn
 
 
 			////////////////////////////////////////////////////////////
-			// FIN INITIALISATION FCM
+			// FIN INITIALISATION PCM
 			///////////////////////////////////////////////////////////
 
 
@@ -582,13 +590,9 @@ public class FCM_Visa_Template implements PlugIn
 
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
-						Umat[i][j] = 0.0;
-						for(k = 1 ; k < kmax ; k++){
-								//Umat[i][j] += Math.pow( Dmat[i][j] / Dmat[k][j], (1/(m-1)) );
 							Umat[i][j] = 1 + Math.pow(Dmat[i][j]/N[i], 1/(m-1));
 							if(Umat[i][j] != 0)
 		            Umat[i][j] = 1/Umat[i][j];
-						}
 					}
 				}
 
@@ -648,6 +652,9 @@ public class FCM_Visa_Template implements PlugIn
 			plot.setColor(Color.blue);
 			plot.show();
 
+			////////////////////////////////
+			// Dave
+			///////////////////////////////
 		} else if (numMethode == 4) {
 
 			imax = nbpixels;  // nombre de pixels dans l'image
@@ -696,21 +703,21 @@ public class FCM_Visa_Template implements PlugIn
 				}
 			}
 
-			// Initialisation des degr�s d'appartenance
-			//A COMPLETER
-	    for(i = 0 ; i < kmax ; i++){
-	        for(j = 0 ; j < nbpixels ; j++){
-							Uprev[i][j] = 0.0f;
-	            for(k = 1 ; k < kmax ; k++){
-									if(Dprev[k][j] > 0)
-	                	Uprev[i][j] += Math.pow( Dprev[i][j] / Dprev[k][j], (1/(m-1)) );
-	            }
-	        }
-	    }
+			for(j = 0; j < nbpixels; j++) {
+      	for(i = 0; i < kmax; i++) {
+        	Uprev[i][j] = 0;
+        	for(k = 0; k < kmax; k++) {
+          	if(Dprev[k][j] != 0)
+            	Uprev[i][j] += Math.pow(Dprev[i][j]/Dprev[k][j], 1/(m-1));
+        	}
+        	if(Uprev[i][j] >= 1)
+          	Uprev[i][j] = 1/Uprev[i][j];
+      	}
+    	}
 
 
 			////////////////////////////////////////////////////////////
-			// FIN INITIALISATION FCM
+			// FIN INITIALISATION Dave
 			///////////////////////////////////////////////////////////
 
 
@@ -760,13 +767,14 @@ public class FCM_Visa_Template implements PlugIn
 
 				for(i = 0 ; i < kmax ; i++){
 					for(j = 0 ; j < nbpixels ; j++){
-						Unoise[j] = 0.0;
 						Umat[i][j] = 0.0;
+						Unoise[j] = 0.0;
 						for(k = 1 ; k < kmax ; k++){
 							if(Dmat[k][j] > 0)
 								Umat[i][j] += Math.pow( Dmat[i][j] / Dmat[k][j], (1/(m-1)) );
-							Unoise[j] += Umat[i][j];
 						}
+						Umat[i][j] = 1.0/Umat[i][j];
+						Unoise[j] += Umat[i][j];
 					}
 				}
 
@@ -785,8 +793,9 @@ public class FCM_Visa_Template implements PlugIn
 				// Calculate difference between the previous partition and the new partition (performance index)
 				for(i = 0 ; i < nbpixels; i++){
 					for(j = 0 ; j < kmax; j++){
-						figJ[iter] += Math.pow(Umat[j][i], m) * Dmat[j][i] + alpha * Math.pow(1 - Unoise[i], m);
+						figJ[iter] += Math.pow(Umat[j][i], m) * Dmat[j][i];
 					}
+					figJ[iter] += alpha * Math.pow(1 - Unoise[i], m);
 				}
 
 				//figJ[iter] += sum;
